@@ -164,7 +164,7 @@
 	}
 	.element:active {
 		box-shadow: 0 0 0;
-		transform: translateY(4px) translateX(4px);
+		transform: translateY(4px)
 	}
 
 	.correct {
