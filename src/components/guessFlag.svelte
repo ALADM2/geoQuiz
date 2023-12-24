@@ -28,8 +28,15 @@
 
 		//Get random countries
 		for (let i = 0; i < countriesNum - 1; i++) {
-			random = Math.floor(Math.random() * data.length); //Generate random country number
-			countries = [...countries, data[random].name.common]; //Push random country name to array
+			let newCountry;
+			do {
+				random = Math.floor(Math.random() * data.length); //Generate random country number
+				newCountry = data[random].name.common;
+				console.log(countries);
+				console.log(newCountry)
+			} while (countries.includes(newCountry));
+			
+			countries = [...countries, newCountry]; //Push random country name to array
 		}
 
 		//Shuffle array countries
