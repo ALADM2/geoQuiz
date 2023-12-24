@@ -84,13 +84,14 @@
 
 <div class="main">
 	<div class="guessFlag">
-		{#if round <= 10} <!-- 10 rounds -->
+		{#if round <= 10}
+			<!-- 10 rounds -->
 			<img src={flag} alt="" />
 			<div class="options">
-                <div class="data">
-                    <h2>Round {round}/10</h2>
-                    <h2>Score: {score}</h2>
-                </div>
+				<div class="data">
+					<h2>Round {round}/10</h2>
+					<h2>Score: {score}</h2>
+				</div>
 				<ul class="countryList">
 					{#each countries as country, index}
 						<button
@@ -117,7 +118,7 @@
 		justify-content: center;
 		background-color: #bdd2b6;
 	}
-    
+
 	.guessFlag {
 		background-color: #f8ede3;
 		padding: 50px;
@@ -125,19 +126,19 @@
 		box-shadow: 6px 6px 10px rgb(0 0 0 / 0.4);
 	}
 
-    .guessFlag>img{
-        border-radius: 3px;
-    }
+	.guessFlag > img {
+		border-radius: 3px;
+	}
 
-    .options{
-        width: -webkit-fill-available;
-    }
+	.options {
+		width: -webkit-fill-available;
+	}
 
-    .data{
-        display: flex;
-        justify-content: space-between;
-        margin: 0px 20px;
-    }
+	.data {
+		display: flex;
+		justify-content: space-between;
+		margin: 0px 20px;
+	}
 
 	.countryList {
 		list-style: none;
@@ -156,7 +157,7 @@
 		border-radius: 5px;
 		box-shadow: 3px 3px 0px #a2b29f;
 		cursor: pointer;
-        text-align: left;
+		text-align: left;
 	}
 	.element:hover {
 		background-color: #798777;
@@ -164,7 +165,7 @@
 	}
 	.element:active {
 		box-shadow: 0 0 0;
-		transform: translateY(4px)
+		transform: translateY(4px);
 	}
 
 	.correct {
@@ -185,21 +186,26 @@
 		color: white;
 	}
 
-    @media (max-width: 900px){
-        .guessFlag{
-            height: 100%;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-        }
+	@media (max-width: 900px) {
+		.guessFlag {
+			height: 100%;
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: space-around;
+		}
 
-        .element{
-            height: 7dvh;
-            display: flex;
-            align-items: center;
-            font-size: 5dvw;
-        }
-    }
+		.element {
+			height: 7dvh;
+			display: flex;
+			align-items: center;
+			font-size: 5dvw;
+		}
+
+		.element:hover {
+			background-color: white;
+			color: black;
+		}
+	}
 </style>
