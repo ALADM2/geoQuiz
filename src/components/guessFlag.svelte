@@ -9,6 +9,7 @@
 	let flag;
 	let rightCountry;
 	let countries = [];
+	let randomNums = []; //To check for duplicates
 	let selected;
 	let isCorrect = false;
 	let isIncorrect = false;
@@ -19,12 +20,18 @@
 		//Fetch data
 		const response = await fetch('https://restcountries.com/v3.1/all');
 		data = await response.json();
+		countries = []; //Empty array in every iteration
+		let random;
 
-		let random = Math.floor(Math.random() * data.length); //Generate random country number
+		do{
+			random = Math.floor(Math.random() * data.length); //Generate random country number
+		} while (randomNums.includes(random));
+
+		randomNums = [...randomNums, random];
 		flag = data[random].flags.png; //Get random flag
 		rightCountry = data[random].name.common; //Flag selected country name
-		countries = []; //Empty array in every iteration
 		countries = [...countries, rightCountry]; //Push random country name to array
+		console.log(randomNums)
 
 		//Get random countries
 		for (let i = 0; i < countriesNum - 1; i++) {
