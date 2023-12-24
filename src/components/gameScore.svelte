@@ -44,5 +44,6 @@
         padding: 20px;
         font-size: larger;
         border-radius: 10px;
+        cursor: pointer;
     }
 </style>
