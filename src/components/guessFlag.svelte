@@ -62,6 +62,8 @@
 
 	//Fetch data on component mount
 	onMount(async () => {
+		score = sessionStorage.getItem('score') || score; //Use stored score to keep it on refresh
+		round = sessionStorage.getItem('round') || round; //Use stored round to keep it on refresh
 		findNewData();
 	});
 
@@ -81,26 +83,24 @@
 		// If selection is correct
 		if (selected.textContent === rightCountry) {
 			selected.classList.add('correct');
-			score = score + 10; //10 points for each correct answer
-			await new Promise((resolve) => setTimeout(resolve, 2000));
+			score = Number(score) + 10; //10 points for each correct answer. Sessionstorage is string type so it needs to be parsed.
+			sessionStorage.setItem('score', score); //Store score
+			await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
 			selected.classList.remove('correct');
-			round++;
-			sessionStorage.removeItem('random');
-			sessionStorage.removeItem('countries');
-			findNewData(); //Get new flag
 
 			// If selection is incorrect
 		} else {
 			selected.classList.add('incorrect');
 			rightListElement.classList.add('correct');
-			await new Promise((resolve) => setTimeout(resolve, 2000));
+			await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
 			selected.classList.remove('incorrect');
 			rightListElement.classList.remove('correct');
-			round++;
-			sessionStorage.removeItem('random');
-			sessionStorage.removeItem('countries');
-			findNewData(); //Get new flag
 		}
+		round++;
+		sessionStorage.setItem('round', round); //Store round in case of refresh
+		sessionStorage.removeItem('random');
+		sessionStorage.removeItem('countries');
+		findNewData(); //Get new flag
 	}
 </script>
 

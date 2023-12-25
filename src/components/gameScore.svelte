@@ -7,6 +7,7 @@
 
 	function handleClick() {
 		score = 0;
+        sessionStorage.setItem('score', score);
 		onChangeScore(score);
 		onChangeRound(round);
 	}
