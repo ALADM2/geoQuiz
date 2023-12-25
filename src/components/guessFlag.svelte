@@ -21,26 +21,33 @@
 		const response = await fetch('https://restcountries.com/v3.1/all');
 		data = await response.json();
 		countries = []; //Empty array in every iteration
-		let random;
+		let random = sessionStorage.getItem('random') || Math.floor(Math.random() * data.length); //Generate random country number;
+		sessionStorage.setItem('random', random);
 
-		do {
+		while (randomNums.includes(random)) {
 			random = Math.floor(Math.random() * data.length); //Generate random country number
-		} while (randomNums.includes(random));
+			sessionStorage.setItem('random', random);
+		}
 
 		randomNums = [...randomNums, random];
 		flag = data[random].flags.png; //Get random flag
 		rightCountry = data[random].name.common; //Flag selected country name
-		countries = [...countries, rightCountry]; //Push random country name to array
+		countries = sessionStorage.getItem('countries')
+			? sessionStorage.getItem('countries').split(',')
+			: [...countries, rightCountry]; //Push random country name to array
 
-		//Get random countries
-		for (let i = 0; i < countriesNum - 1; i++) {
-			let newCountry;
-			do {
-				random = Math.floor(Math.random() * data.length); //Generate random country number
-				newCountry = data[random].name.common;
-			} while (countries.includes(newCountry));
+		//Get random countries for answers
+		if (countries.length < 4) {
+			for (let i = 0; i < countriesNum - 1; i++) {
+				let newCountry;
+				do {
+					random = Math.floor(Math.random() * data.length); //Generate random country number
+					newCountry = data[random].name.common;
+				} while (countries.includes(newCountry));
 
-			countries = [...countries, newCountry]; //Push random country name to array
+				countries = [...countries, newCountry]; //Push random country name to array
+			}
+			sessionStorage.setItem('countries', countries);
 		}
 
 		//Shuffle array countries
@@ -78,6 +85,8 @@
 			await new Promise((resolve) => setTimeout(resolve, 2000));
 			selected.classList.remove('correct');
 			round++;
+			sessionStorage.removeItem('random');
+			sessionStorage.removeItem('countries');
 			findNewData(); //Get new flag
 
 			// If selection is incorrect
@@ -88,6 +97,8 @@
 			selected.classList.remove('incorrect');
 			rightListElement.classList.remove('correct');
 			round++;
+			sessionStorage.removeItem('random');
+			sessionStorage.removeItem('countries');
 			findNewData(); //Get new flag
 		}
 	}
