@@ -23,7 +23,7 @@
 		countries = []; //Empty array in every iteration
 		let random;
 
-		do{
+		do {
 			random = Math.floor(Math.random() * data.length); //Generate random country number
 		} while (randomNums.includes(random));
 
@@ -31,7 +31,6 @@
 		flag = data[random].flags.png; //Get random flag
 		rightCountry = data[random].name.common; //Flag selected country name
 		countries = [...countries, rightCountry]; //Push random country name to array
-		console.log(randomNums)
 
 		//Get random countries
 		for (let i = 0; i < countriesNum - 1; i++) {
@@ -39,10 +38,8 @@
 			do {
 				random = Math.floor(Math.random() * data.length); //Generate random country number
 				newCountry = data[random].name.common;
-				console.log(countries);
-				console.log(newCountry)
 			} while (countries.includes(newCountry));
-			
+
 			countries = [...countries, newCountry]; //Push random country name to array
 		}
 
@@ -98,13 +95,14 @@
 
 <div class="main">
 	<div class="guessFlag">
-		{#if round <= 10} <!-- 10 rounds -->
+		{#if round <= 10}
+			<!-- 10 rounds -->
 			<img src={flag} alt="" />
 			<div class="options">
-                <div class="data">
-                    <h2>Round {round}/10</h2>
-                    <h2>Score: {score}</h2>
-                </div>
+				<div class="data">
+					<h2>Round&nbsp;&nbsp;{round}/10</h2>
+					<h2>Score: {score}</h2>
+				</div>
 				<ul class="countryList">
 					{#each countries as country, index}
 						<button
@@ -131,27 +129,29 @@
 		justify-content: center;
 		background-color: #bdd2b6;
 	}
-    
+
 	.guessFlag {
 		background-color: #f8ede3;
 		padding: 50px;
 		border-radius: 10px;
 		box-shadow: 6px 6px 10px rgb(0 0 0 / 0.4);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 
-    .guessFlag>img{
-        border-radius: 3px;
-    }
+	.guessFlag > img {
+		border-radius: 3px;
+	}
 
-    .options{
-        width: -webkit-fill-available;
-    }
+	.options {
+		width: -webkit-fill-available;
+	}
 
-    .data{
-        display: flex;
-        justify-content: space-between;
-        margin: 0px 20px;
-    }
+	.data {
+		display: flex;
+		justify-content: space-between;
+	}
 
 	.countryList {
 		list-style: none;
@@ -168,17 +168,20 @@
 		background-color: white;
 		margin-top: 15px;
 		border-radius: 5px;
-		box-shadow: 3px 3px 0px #a2b29f;
+		box-shadow: 3px 3px 0px #798777;
 		cursor: pointer;
-        text-align: left;
+		text-align: left;
+		font-family: 'Chakra Petch';
+		font-weight: bold;
+		font-size: 1.3dvw;
 	}
 	.element:hover {
-		background-color: #798777;
+		background-color: #a2b29f;
 		color: white;
 	}
 	.element:active {
 		box-shadow: 0 0 0;
-		transform: translateY(4px)
+		transform: translateY(4px);
 	}
 
 	.correct {
@@ -199,21 +202,33 @@
 		color: white;
 	}
 
-    @media (max-width: 900px){
-        .guessFlag{
-            height: 100%;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-        }
+	@media (max-width: 900px) {
+		.guessFlag {
+			height: 100%;
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: space-around;
+		}
 
-        .element{
-            height: 7dvh;
-            display: flex;
-            align-items: center;
-            font-size: 5dvw;
-        }
-    }
+		.element {
+			height: 7dvh;
+			display: flex;
+			align-items: center;
+			font-size: 5dvw;
+		}
+		.element:hover {
+			background-color: white;
+			color: black;
+		}
+		.correct:hover {
+			background-color: rgb(132, 255, 132);
+			color: white;
+		}
+		.incorrect:hover {
+			background-color: rgb(255, 128, 128);
+			color: white;
+		}
+	}
 </style>
