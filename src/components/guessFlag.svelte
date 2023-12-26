@@ -1,8 +1,9 @@
 <script>
 	// @ts-nocheck
 
-	import { onMount } from 'svelte';
 	import GameScore from './gameScore.svelte';
+	import Timer from './timer.svelte';
+	import { onMount } from 'svelte';
 	import { Circle3 } from 'svelte-loading-spinners';
 
 	const countriesNum = 4;
@@ -17,12 +18,16 @@
 	let round = 1; //Start in first round
 	let score = 0;
 	let isReady = false;
+	let restart = false; //Exported from timer
+	let seconds = 5; //Exported from timer
 
+	// $: console.log(seconds)
 	const findNewData = async () => {
 		//Fetch data
 		const response = await fetch('https://restcountries.com/v3.1/all');
 		data = await response.json();
 		countries = []; //Empty array in every iteration
+		restart = false; //Set to false when new question
 		let random = sessionStorage.getItem('random') || Math.floor(Math.random() * data.length); //Generate random country number;
 		sessionStorage.setItem('random', random);
 
@@ -110,6 +115,7 @@
 			rightListElement.classList.remove('correct');
 		}
 		round++;
+		restart = true; //Activate restart timer in timer component after 
 		sessionStorage.setItem('round', round); //Store round in case of refresh
 		sessionStorage.removeItem('random');
 		sessionStorage.removeItem('countries');
@@ -128,6 +134,7 @@
 					<div class="data">
 						<h2>Round&nbsp;&nbsp;{round}/10</h2>
 						<h2>Score: {score}</h2>
+						<Timer {restart} {seconds}/>
 					</div>
 					<ul class="countryList">
 						{#each countries as country, index}
