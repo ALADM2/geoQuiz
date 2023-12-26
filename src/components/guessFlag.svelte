@@ -20,8 +20,8 @@
 	let isReady = false;
 	let restart = false; //Exported from timer
 	let seconds = 5; //Exported from timer
+	let timeOff = false; //Use when timer is down to 0
 
-	// $: console.log(seconds)
 	const findNewData = async () => {
 		//Fetch data
 		const response = await fetch('https://restcountries.com/v3.1/all');
@@ -85,43 +85,80 @@
 		findNewData();
 	});
 
-	async function handleClick(index) {
-		selected = document.querySelector(`.element:nth-child(${index + 1})`); //Get selected html element
+	async function getCorrectElement(){
 		const list = document.querySelectorAll('.element'); //Get all list elements
 
-		//Find correct html element
+		// Find correct html element
 		let rightListElement;
 		list.forEach((element) => {
 			if (element.textContent.includes(rightCountry)) {
 				rightListElement = element;
+				console.log(rightListElement)
 				return;
 			}
 		});
 
-		// If selection is correct
-		if (selected.textContent === rightCountry) {
-			selected.classList.add('correct');
-			score = Number(score) + 10; //10 points for each correct answer. Sessionstorage is string type so it needs to be parsed.
-			sessionStorage.setItem('score', score); //Store score
-			await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
-			selected.classList.remove('correct');
+		return rightListElement;
+	}
 
-			// If selection is incorrect
-		} else {
+	async function rightAnswer() {
+		selected.classList.add('correct');
+		score = Number(score) + 10; //10 points for each correct answer. Sessionstorage is string type so it needs to be parsed.
+		sessionStorage.setItem('score', score); //Store score
+		await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
+		selected.classList.remove('correct');
+	}
+
+	async function wrongAnswer() {
+		const rightListElement = await getCorrectElement();
+		console.log(rightListElement)
+		if(selected){
 			selected.classList.add('incorrect');
 			rightListElement.classList.add('correct');
 			await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
 			selected.classList.remove('incorrect');
 			rightListElement.classList.remove('correct');
+		} else { //If timer runs out
+			rightListElement.classList.add('correct');
+			await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
+			rightListElement.classList.remove('correct');
 		}
+	}
+	
+	async function passRound() {
 		round++;
-		restart = true; //Activate restart timer in timer component after 
+		restart = true; //Activate restart timer in timer component after
 		sessionStorage.setItem('round', round); //Store round in case of refresh
 		sessionStorage.removeItem('random');
 		sessionStorage.removeItem('countries');
 		findNewData(); //Get new flag
 	}
+	
+	$: {
+		// When times runs out
+		if(seconds === 0){
+			async function activateWrongAnswer(){
+				await wrongAnswer();
+				await passRound();
+			}
+			activateWrongAnswer();
+		}
+	}
 
+	// Handle answer selection
+	async function handleClick(index) {
+		selected = document.querySelector(`.element:nth-child(${index + 1})`); //Get selected html element
+
+		// If selection is correct
+		if (selected.textContent === rightCountry) {
+			await rightAnswer();
+
+		// If selection is incorrect
+		} else {
+			await wrongAnswer(selected);
+		}
+		await passRound(); // Next round
+	}
 </script>
 
 <div class="main">
@@ -134,7 +171,7 @@
 					<div class="data">
 						<h2>Round&nbsp;&nbsp;{round}/10</h2>
 						<h2>Score: {score}</h2>
-						<Timer {restart} {seconds}/>
+						<Timer {restart} {seconds} onChangeTimer={(v) => (seconds = v)} />
 					</div>
 					<ul class="countryList">
 						{#each countries as country, index}

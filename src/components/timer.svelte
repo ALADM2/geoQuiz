@@ -5,36 +5,31 @@
 
 	export let restart;
 	export let seconds;
+    export let onChangeTimer;
 	let interval;
 
-	$: {
-		if (restart) {
-			// Reset the timer to 5 when restart changes
-			seconds = 5;
-			interval = setInterval(() => {
+    function countDown() {
+        interval = setInterval(() => {
                 restart = false; // Reset restart to avoid infinite loop
 				seconds -= 1;
+                onChangeTimer(seconds);
 
 				if (seconds === 0) {
 					clearInterval(interval);
 				}
 			}, 1000);
+    }
+
+	$: {
+		if (restart) {
+			// Reset the timer to 5 when restart changes
+			seconds = 5;
+			countDown();
 		}
 	}
 
 	onMount(() => {
-		interval = setInterval(() => {
-			seconds -= 1;
-
-			if (seconds === 0) {
-				clearInterval(interval);
-				// Add any additional actions to perform when the countdown reaches zero
-			}
-		}, 1000);
-
-		return () => {
-			clearInterval(interval); // Cleanup the interval when the component is destroyed
-		};
+		countDown();
 	});
 </script>
 
