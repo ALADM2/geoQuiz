@@ -115,6 +115,7 @@
 		sessionStorage.removeItem('countries');
 		findNewData(); //Get new flag
 	}
+
 </script>
 
 <div class="main">
@@ -145,7 +146,7 @@
 			{/if}
 		</div>
 	{:else}
-		<Circle3 size="100" color="#FF3E00" unit="px" duration="1s" />
+		<Circle3 size="100" unit="px" duration="1.5s" />
 	{/if}
 </div>
 
