@@ -3,6 +3,7 @@
 
 	import { onMount } from 'svelte';
 	import GameScore from './gameScore.svelte';
+	import { Circle3 } from 'svelte-loading-spinners';
 
 	const countriesNum = 4;
 	let data;
@@ -15,6 +16,7 @@
 	let isIncorrect = false;
 	let round = 1; //Start in first round
 	let score = 0;
+	let isReady = false;
 
 	const findNewData = async () => {
 		//Fetch data
@@ -64,6 +66,17 @@
 	onMount(async () => {
 		score = sessionStorage.getItem('score') || score; //Use stored score to keep it on refresh
 		round = sessionStorage.getItem('round') || round; //Use stored round to keep it on refresh
+		const prepare = async () => {
+			try {
+				// Artificially delay for 2 seconds to simulate a slow loading
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+			} catch (err) {
+				console.log(err);
+			} finally {
+				isReady = true;
+			}
+		};
+		prepare();
 		findNewData();
 	});
 
@@ -105,31 +118,35 @@
 </script>
 
 <div class="main">
-	<div class="guessFlag">
-		{#if round <= 10}
-			<!-- 10 rounds -->
-			<img src={flag} alt="" />
-			<div class="options">
-				<div class="data">
-					<h2>Round&nbsp;&nbsp;{round}/10</h2>
-					<h2>Score: {score}</h2>
+	{#if isReady}
+		<div class="guessFlag">
+			{#if round <= 10}
+				<!-- 10 rounds -->
+				<img src={flag} alt="" />
+				<div class="options">
+					<div class="data">
+						<h2>Round&nbsp;&nbsp;{round}/10</h2>
+						<h2>Score: {score}</h2>
+					</div>
+					<ul class="countryList">
+						{#each countries as country, index}
+							<button
+								value={country}
+								class="element"
+								on:click={() => handleClick(index)}
+								class:correct={isCorrect}
+								class:incorrect={isIncorrect}>{country}</button
+							>
+						{/each}
+					</ul>
 				</div>
-				<ul class="countryList">
-					{#each countries as country, index}
-						<button
-							value={country}
-							class="element"
-							on:click={() => handleClick(index)}
-							class:correct={isCorrect}
-							class:incorrect={isIncorrect}>{country}</button
-						>
-					{/each}
-				</ul>
-			</div>
-		{:else}
-			<GameScore {score} onChangeRound={(v) => (round = v)} onChangeScore={(v) => (score = v)} />
-		{/if}
-	</div>
+			{:else}
+				<GameScore {score} onChangeRound={(v) => (round = v)} onChangeScore={(v) => (score = v)} />
+			{/if}
+		</div>
+	{:else}
+		<Circle3 size="100" color="#FF3E00" unit="px" duration="1s" />
+	{/if}
 </div>
 
 <style>
