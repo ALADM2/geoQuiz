@@ -10,11 +10,13 @@
 	let data;
 	let flag;
 	let rightCountry;
+	let newGame = false;
 	let countries = [];
 	let randomNums = []; //To check for duplicates
 	let selected;
 	let isCorrect = false;
 	let isIncorrect = false;
+	let isDisabled = false;
 	let round = 1; //Start in first round
 	let score = 0;
 	let isReady = false;
@@ -86,7 +88,7 @@
 		findNewData();
 	});
 
-	async function getCorrectElement(){
+	async function getCorrectElement() {
 		const list = document.querySelectorAll('.element'); //Get all list elements
 
 		// Find correct html element
@@ -94,12 +96,27 @@
 		list.forEach((element) => {
 			if (element.textContent.includes(rightCountry)) {
 				rightListElement = element;
-				console.log(rightListElement)
 				return;
 			}
 		});
 
 		return rightListElement;
+	}
+
+	async function disableButtons() {
+		//Dissable the other buttons
+		const list = document.querySelectorAll('.element'); //Get all list elements
+		console.log(list)
+		list.forEach((element) => {
+			element.classList.add('disabled');
+		});
+	}
+
+	async function enableButtons() {
+		const list = document.querySelectorAll('.element'); //Get all list elements
+		list.forEach((element) => {
+			element.classList.remove('disabled');
+		});
 	}
 
 	async function rightAnswer() {
@@ -112,34 +129,37 @@
 
 	async function wrongAnswer() {
 		const rightListElement = await getCorrectElement();
-		if(selected){
+		if (selected) {
 			selected.classList.add('incorrect');
 			rightListElement.classList.add('correct');
 			await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
 			selected.classList.remove('incorrect');
 			rightListElement.classList.remove('correct');
-		} else { //If timer runs out
+		} else {
+			//If timer runs out
 			rightListElement.classList.add('correct');
 			await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
 			rightListElement.classList.remove('correct');
 		}
 	}
-	
+
 	async function passRound() {
 		round++;
 		restart = true; //Activate restart timer in timer component after
 		sessionStorage.setItem('round', round); //Store round in case of refresh
 		sessionStorage.removeItem('random');
 		sessionStorage.removeItem('countries');
-		if(round <= 10){
+		enableButtons();
+		if (round <= 10) {
 			findNewData(); //Get new flag
 		}
 	}
-	
+
 	$: {
 		// When times runs out
-		if(seconds === 0){
-			async function activateWrongAnswer(){
+		if (seconds === 0) {
+			async function activateWrongAnswer() {
+				disableButtons();
 				await wrongAnswer();
 				await passRound();
 			}
@@ -147,16 +167,26 @@
 		}
 	}
 
+	$: {
+		//If newGame
+		if (newGame) {
+			console.log(newGame);
+			newGame = false;
+			findNewData();
+		}
+	}
+
 	// Handle answer selection
 	async function handleClick(index) {
 		isClicked = true;
 		selected = document.querySelector(`.element:nth-child(${index + 1})`); //Get selected html element
+		disableButtons(); //Dissable rest of buttons
 
 		// If selection is correct
 		if (selected.textContent === rightCountry) {
 			await rightAnswer();
 
-		// If selection is incorrect
+			// If selection is incorrect
 		} else {
 			await wrongAnswer(selected);
 		}
@@ -178,18 +208,17 @@
 					</div>
 					<ul class="countryList">
 						{#each countries as country, index}
-							<button
-								value={country}
-								class="element"
-								on:click={() => handleClick(index)}
-								class:correct={isCorrect}
-								class:incorrect={isIncorrect}>{country}</button
-							>
+							<button value={country} class="element" on:click={() => handleClick(index)} class:correct={isCorrect} class:incorrect={isIncorrect} class:disabled={isDisabled}>{country}</button>
 						{/each}
 					</ul>
 				</div>
 			{:else}
-				<GameScore {score} onChangeRound={(v) => (round = v)} onChangeScore={(v) => (score = v)} />
+				<GameScore
+					{score}
+					onNewGame={(v) => (newGame = v)}
+					onChangeRound={(v) => (round = v)}
+					onChangeScore={(v) => (score = v)}
+				/>
 			{/if}
 		</div>
 	{:else}
@@ -276,6 +305,11 @@
 	.incorrect:hover {
 		background-color: rgb(255, 128, 128);
 		color: white;
+	}
+
+	.disabled {
+		pointer-events: none; /* Disable pointer events */
+		opacity: 0.8;
 	}
 
 	@media (max-width: 900px) {
