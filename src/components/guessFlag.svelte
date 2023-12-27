@@ -149,8 +149,9 @@
 		sessionStorage.setItem('round', round); //Store round in case of refresh
 		sessionStorage.removeItem('random');
 		sessionStorage.removeItem('countries');
-		await enableButtons();
+		enableButtons();
 		selected = null; //Deselect button
+		console.log(round)
 		if (round <= 10) {
 			findNewData(); //Get new flag
 		}
@@ -199,14 +200,14 @@
 		<div class="guessFlag">
 			{#if round <= 10}
 				<!-- 10 rounds -->
+				<div class="data">
+					<h2>Round&nbsp;&nbsp;{round}/10</h2>
+					<h2>Score: {score}</h2>
+				</div>
 				<img src={flag} alt="" />
 				<div class="options">
-					<div class="data">
-						<h2>Round&nbsp;&nbsp;{round}/10</h2>
-						<h2>Score: {score}</h2>
-						<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
-					</div>
 					<ul class="countryList">
+						<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
 						{#each countries as country, index}
 							<button value={country} class="element" on:click={() => handleClick(index)} class:correct={isCorrect} class:incorrect={isIncorrect} class:disabled={isDisabled}>{country}</button>
 						{/each}
@@ -242,15 +243,20 @@
 
 	.guessFlag > img {
 		border-radius: 3px;
+		max-height: 30%;
 	}
 
 	.options {
 		width: -webkit-fill-available;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 
 	.data {
 		display: flex;
 		justify-content: space-between;
+		width: 100%;
 	}
 
 	.countryList {
@@ -258,6 +264,10 @@
 		padding: 0;
 		margin: 0;
 		margin-top: 30px;
+		width: inherit;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 
 	.element {

@@ -28,20 +28,27 @@
 
 	$: {
 		if (restart) {
+			console.log("restart")
 			// Reset the timer to 5 when restart changes
 			seconds = 5;
 			countDown();
 		}
-        // if (isClicked) {
-        //     seconds = 5;
-        // }
 	}
 
 	onMount(() => {
-		countDown();
+		if(!restart){
+			countDown();
+		}
 	});
 </script>
 
 <div class="timer">
 	<h2>{seconds}</h2>
 </div>
+
+<style>
+	.timer>h2{
+		font-size: 3dvw;
+		margin: 0;
+	}
+</style>
