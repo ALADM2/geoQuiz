@@ -103,15 +103,15 @@
 		return rightListElement;
 	}
 
+	//Dissable buttons
 	async function disableButtons() {
-		//Dissable the other buttons
 		const list = document.querySelectorAll('.element'); //Get all list elements
-		console.log(list)
 		list.forEach((element) => {
 			element.classList.add('disabled');
 		});
 	}
 
+	//Enable buttons
 	async function enableButtons() {
 		const list = document.querySelectorAll('.element'); //Get all list elements
 		list.forEach((element) => {
@@ -149,7 +149,8 @@
 		sessionStorage.setItem('round', round); //Store round in case of refresh
 		sessionStorage.removeItem('random');
 		sessionStorage.removeItem('countries');
-		enableButtons();
+		await enableButtons();
+		selected = null; //Deselect button
 		if (round <= 10) {
 			findNewData(); //Get new flag
 		}
@@ -170,7 +171,6 @@
 	$: {
 		//If newGame
 		if (newGame) {
-			console.log(newGame);
 			newGame = false;
 			findNewData();
 		}
@@ -180,7 +180,7 @@
 	async function handleClick(index) {
 		isClicked = true;
 		selected = document.querySelector(`.element:nth-child(${index + 1})`); //Get selected html element
-		disableButtons(); //Dissable rest of buttons
+		disableButtons(); //Dissable buttons
 
 		// If selection is correct
 		if (selected.textContent === rightCountry) {
@@ -213,12 +213,7 @@
 					</ul>
 				</div>
 			{:else}
-				<GameScore
-					{score}
-					onNewGame={(v) => (newGame = v)}
-					onChangeRound={(v) => (round = v)}
-					onChangeScore={(v) => (score = v)}
-				/>
+				<GameScore {score} onNewGame={(v) => (newGame = v)} onChangeRound={(v) => (round = v)} onChangeScore={(v) => (score = v)}/>
 			{/if}
 		</div>
 	{:else}
@@ -309,7 +304,7 @@
 
 	.disabled {
 		pointer-events: none; /* Disable pointer events */
-		opacity: 0.8;
+		opacity: 0.6;
 	}
 
 	@media (max-width: 900px) {
