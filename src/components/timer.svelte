@@ -52,4 +52,11 @@
 		margin: 0;
 		margin-top: 30px;
 	}
+	@media (max-width: 900px) {
+		.timer>h2{
+			font-size: 10dvw;
+			margin-top: 0;
+			margin-bottom: 20px;
+		}
+	}
 </style>

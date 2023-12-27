@@ -325,7 +325,9 @@
 			align-items: center;
 			justify-content: space-around;
 		}
-
+		.options{
+			margin-bottom: 30px;
+		}
 		.element {
 			height: 7dvh;
 			display: flex;
