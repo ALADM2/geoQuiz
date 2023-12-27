@@ -1,28 +1,36 @@
 <script>
 	// @ts-nocheck
 
-	import { onMount } from 'svelte';
 	import GameScore from './gameScore.svelte';
+	import Timer from './timer.svelte';
+	import { onMount } from 'svelte';
 	import { Circle3 } from 'svelte-loading-spinners';
 
 	const countriesNum = 4;
 	let data;
 	let flag;
 	let rightCountry;
+	let newGame = false;
 	let countries = [];
 	let randomNums = []; //To check for duplicates
 	let selected;
 	let isCorrect = false;
 	let isIncorrect = false;
+	let isDisabled = false;
 	let round = 1; //Start in first round
 	let score = 0;
 	let isReady = false;
+	let restart = false; //Exported from timer
+	let seconds = 5; //Exported from timer
+	let isClicked = false;
 
 	const findNewData = async () => {
 		//Fetch data
 		const response = await fetch('https://restcountries.com/v3.1/all');
 		data = await response.json();
 		countries = []; //Empty array in every iteration
+		restart = false; //Set to false when new question
+		isClicked = false;
 		let random = sessionStorage.getItem('random') || Math.floor(Math.random() * data.length); //Generate random country number;
 		sessionStorage.setItem('random', random);
 
@@ -80,11 +88,10 @@
 		findNewData();
 	});
 
-	async function handleClick(index) {
-		selected = document.querySelector(`.element:nth-child(${index + 1})`); //Get selected html element
+	async function getCorrectElement() {
 		const list = document.querySelectorAll('.element'); //Get all list elements
 
-		//Find correct html element
+		// Find correct html element
 		let rightListElement;
 		list.forEach((element) => {
 			if (element.textContent.includes(rightCountry)) {
@@ -93,29 +100,99 @@
 			}
 		});
 
-		// If selection is correct
-		if (selected.textContent === rightCountry) {
-			selected.classList.add('correct');
-			score = Number(score) + 10; //10 points for each correct answer. Sessionstorage is string type so it needs to be parsed.
-			sessionStorage.setItem('score', score); //Store score
-			await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
-			selected.classList.remove('correct');
+		return rightListElement;
+	}
 
-			// If selection is incorrect
-		} else {
+	//Dissable buttons
+	async function disableButtons() {
+		const list = document.querySelectorAll('.element'); //Get all list elements
+		list.forEach((element) => {
+			element.classList.add('disabled');
+		});
+	}
+
+	//Enable buttons
+	async function enableButtons() {
+		const list = document.querySelectorAll('.element'); //Get all list elements
+		list.forEach((element) => {
+			element.classList.remove('disabled');
+		});
+	}
+
+	async function rightAnswer() {
+		selected.classList.add('correct');
+		score = Number(score) + 10; //10 points for each correct answer. Sessionstorage is string type so it needs to be parsed.
+		sessionStorage.setItem('score', score); //Store score
+		await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
+		selected.classList.remove('correct');
+	}
+
+	async function wrongAnswer() {
+		const rightListElement = await getCorrectElement();
+		if (selected) {
 			selected.classList.add('incorrect');
 			rightListElement.classList.add('correct');
 			await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
 			selected.classList.remove('incorrect');
 			rightListElement.classList.remove('correct');
+		} else {
+			//If timer runs out
+			rightListElement.classList.add('correct');
+			await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
+			rightListElement.classList.remove('correct');
 		}
+	}
+
+	async function passRound() {
 		round++;
+		restart = true; //Activate restart timer in timer component after
 		sessionStorage.setItem('round', round); //Store round in case of refresh
 		sessionStorage.removeItem('random');
 		sessionStorage.removeItem('countries');
-		findNewData(); //Get new flag
+		enableButtons();
+		selected = null; //Deselect button
+		console.log(round)
+		if (round <= 10) {
+			findNewData(); //Get new flag
+		}
 	}
 
+	$: {
+		// When times runs out
+		if (seconds === 0) {
+			async function activateWrongAnswer() {
+				disableButtons();
+				await wrongAnswer();
+				await passRound();
+			}
+			activateWrongAnswer();
+		}
+	}
+
+	$: {
+		//If newGame
+		if (newGame) {
+			newGame = false;
+			findNewData();
+		}
+	}
+
+	// Handle answer selection
+	async function handleClick(index) {
+		isClicked = true;
+		selected = document.querySelector(`.element:nth-child(${index + 1})`); //Get selected html element
+		disableButtons(); //Dissable buttons
+
+		// If selection is correct
+		if (selected.textContent === rightCountry) {
+			await rightAnswer();
+
+			// If selection is incorrect
+		} else {
+			await wrongAnswer(selected);
+		}
+		await passRound(); // Next round
+	}
 </script>
 
 <div class="main">
@@ -123,26 +200,21 @@
 		<div class="guessFlag">
 			{#if round <= 10}
 				<!-- 10 rounds -->
+				<div class="data">
+					<h2>Round&nbsp;&nbsp;{round}/10</h2>
+					<h2>Score: {score}</h2>
+				</div>
 				<img src={flag} alt="" />
 				<div class="options">
-					<div class="data">
-						<h2>Round&nbsp;&nbsp;{round}/10</h2>
-						<h2>Score: {score}</h2>
-					</div>
+					<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
 					<ul class="countryList">
 						{#each countries as country, index}
-							<button
-								value={country}
-								class="element"
-								on:click={() => handleClick(index)}
-								class:correct={isCorrect}
-								class:incorrect={isIncorrect}>{country}</button
-							>
+							<button value={country} class="element" on:click={() => handleClick(index)} class:correct={isCorrect} class:incorrect={isIncorrect} class:disabled={isDisabled}>{country}</button>
 						{/each}
 					</ul>
 				</div>
 			{:else}
-				<GameScore {score} onChangeRound={(v) => (round = v)} onChangeScore={(v) => (score = v)} />
+				<GameScore {score} onNewGame={(v) => (newGame = v)} onChangeRound={(v) => (round = v)} onChangeScore={(v) => (score = v)}/>
 			{/if}
 		</div>
 	{:else}
@@ -171,22 +243,30 @@
 
 	.guessFlag > img {
 		border-radius: 3px;
+		max-height: 30%;
 	}
 
 	.options {
 		width: -webkit-fill-available;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 
 	.data {
 		display: flex;
 		justify-content: space-between;
+		width: 100%;
 	}
 
 	.countryList {
 		list-style: none;
 		padding: 0;
 		margin: 0;
-		margin-top: 30px;
+		width: inherit;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 
 	.element {
@@ -231,6 +311,11 @@
 		color: white;
 	}
 
+	.disabled {
+		pointer-events: none; /* Disable pointer events */
+		opacity: 0.6;
+	}
+
 	@media (max-width: 900px) {
 		.guessFlag {
 			height: 100%;
@@ -240,7 +325,9 @@
 			align-items: center;
 			justify-content: space-around;
 		}
-
+		.options{
+			margin-bottom: 30px;
+		}
 		.element {
 			height: 7dvh;
 			display: flex;

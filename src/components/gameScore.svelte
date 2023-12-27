@@ -3,6 +3,7 @@
 	export let score = 0;
 	export let onChangeRound;
 	export let onChangeScore;
+	export let onNewGame;
 	let round = 1;
 
 	function handleClick() {
@@ -11,6 +12,7 @@
         sessionStorage.setItem('round', round);
 		onChangeScore(score);
 		onChangeRound(round);
+		onNewGame(true);
 	}
 </script>
 
