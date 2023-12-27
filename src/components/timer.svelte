@@ -5,20 +5,26 @@
 
 	export let restart;
 	export let seconds;
-    export let onChangeTimer;
+	export let isClicked;
+	export let onChangeTimer;
 	let interval;
 
-    function countDown() {
-        interval = setInterval(() => {
-                restart = false; // Reset restart to avoid infinite loop
-				seconds -= 1;
-                onChangeTimer(seconds);
+	function countDown() {
+		interval = setInterval(() => {
+			restart = false; // Reset restart to avoid infinite loop
+            if(isClicked){
+                clearInterval(interval);
+                isClicked = false;
+                return
+            }
+			seconds -= 1;
+			onChangeTimer(seconds);
 
-				if (seconds === 0) {
-					clearInterval(interval);
-				}
-			}, 1000);
-    }
+			if (seconds === 0) {
+				clearInterval(interval);
+			}
+		}, 1000);
+	}
 
 	$: {
 		if (restart) {
@@ -26,6 +32,9 @@
 			seconds = 5;
 			countDown();
 		}
+        // if (isClicked) {
+        //     seconds = 5;
+        // }
 	}
 
 	onMount(() => {

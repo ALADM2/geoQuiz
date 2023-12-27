@@ -20,7 +20,7 @@
 	let isReady = false;
 	let restart = false; //Exported from timer
 	let seconds = 5; //Exported from timer
-	let timeOff = false; //Use when timer is down to 0
+	let isClicked = false;
 
 	const findNewData = async () => {
 		//Fetch data
@@ -28,6 +28,7 @@
 		data = await response.json();
 		countries = []; //Empty array in every iteration
 		restart = false; //Set to false when new question
+		isClicked = false;
 		let random = sessionStorage.getItem('random') || Math.floor(Math.random() * data.length); //Generate random country number;
 		sessionStorage.setItem('random', random);
 
@@ -111,7 +112,6 @@
 
 	async function wrongAnswer() {
 		const rightListElement = await getCorrectElement();
-		console.log(rightListElement)
 		if(selected){
 			selected.classList.add('incorrect');
 			rightListElement.classList.add('correct');
@@ -131,7 +131,9 @@
 		sessionStorage.setItem('round', round); //Store round in case of refresh
 		sessionStorage.removeItem('random');
 		sessionStorage.removeItem('countries');
-		findNewData(); //Get new flag
+		if(round <= 10){
+			findNewData(); //Get new flag
+		}
 	}
 	
 	$: {
@@ -147,6 +149,7 @@
 
 	// Handle answer selection
 	async function handleClick(index) {
+		isClicked = true;
 		selected = document.querySelector(`.element:nth-child(${index + 1})`); //Get selected html element
 
 		// If selection is correct
@@ -171,7 +174,7 @@
 					<div class="data">
 						<h2>Round&nbsp;&nbsp;{round}/10</h2>
 						<h2>Score: {score}</h2>
-						<Timer {restart} {seconds} onChangeTimer={(v) => (seconds = v)} />
+						<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
 					</div>
 					<ul class="countryList">
 						{#each countries as country, index}
