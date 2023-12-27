@@ -206,8 +206,8 @@
 				</div>
 				<img src={flag} alt="" />
 				<div class="options">
+					<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
 					<ul class="countryList">
-						<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
 						{#each countries as country, index}
 							<button value={country} class="element" on:click={() => handleClick(index)} class:correct={isCorrect} class:incorrect={isIncorrect} class:disabled={isDisabled}>{country}</button>
 						{/each}
@@ -263,7 +263,6 @@
 		list-style: none;
 		padding: 0;
 		margin: 0;
-		margin-top: 30px;
 		width: inherit;
 		display: flex;
 		flex-direction: column;

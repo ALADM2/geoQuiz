@@ -50,5 +50,6 @@
 	.timer>h2{
 		font-size: 3dvw;
 		margin: 0;
+		margin-top: 30px;
 	}
 </style>
