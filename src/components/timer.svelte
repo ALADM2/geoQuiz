@@ -7,6 +7,7 @@
 	export let seconds;
 	export let isClicked;
 	export let onChangeTimer;
+	let style;
 	let interval;
 
 	function countDown() {
@@ -28,13 +29,17 @@
 
 	$: {
 		if (restart) {
-			console.log("restart")
 			// Reset the timer to 5 when restart changes
 			seconds = 5;
 			countDown();
 		}
 	}
 
+	// Timer red color when value 0
+	$: {
+		style = seconds === 0 ? 'color: red' : 'color: black'
+	}
+		
 	onMount(() => {
 		if(!restart){
 			countDown();
@@ -43,7 +48,7 @@
 </script>
 
 <div class="timer">
-	<h2>{seconds}</h2>
+	<h2 style={style}>{seconds}</h2>
 </div>
 
 <style>
@@ -52,6 +57,7 @@
 		margin: 0;
 		margin-top: 30px;
 	}
+
 	@media (max-width: 900px) {
 		.timer>h2{
 			font-size: 10dvw;
