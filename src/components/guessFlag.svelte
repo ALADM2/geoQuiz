@@ -6,6 +6,8 @@
 	import { onMount } from 'svelte';
 	import { Circle3 } from 'svelte-loading-spinners';
 
+	import { rightAnswer, wrongAnswer, enableButtons, disableButtons } from '$lib/gameFunctions';
+
 	const countriesNum = 4;
 	let data;
 	let flag;
@@ -13,7 +15,7 @@
 	let newGame = false;
 	let countries = [];
 	let randomNums = []; //To check for duplicates
-	let selected;
+	let selected = null;
 	let isCorrect = false;
 	let isIncorrect = false;
 	let isDisabled = false;
@@ -31,6 +33,7 @@
 		countries = []; //Empty array in every iteration
 		restart = false; //Set to false when new question
 		isClicked = false;
+		seconds = 5; //Reset seconds to 5
 		let random = sessionStorage.getItem('random') || Math.floor(Math.random() * data.length); //Generate random country number;
 		sessionStorage.setItem('random', random);
 
@@ -85,63 +88,24 @@
 			}
 		};
 		prepare();
-		findNewData();
+		findNewData(data, countries, restart, isClicked, randomNums, flag, rightCountry, countriesNum);
 	});
 
-	async function getCorrectElement() {
-		const list = document.querySelectorAll('.element'); //Get all list elements
+	// //Dissable buttons
+	// async function disableButtons() {
+	// 	const list = document.querySelectorAll('.element'); //Get all list elements
+	// 	list.forEach((element) => {
+	// 		element.classList.add('disabled');
+	// 	});
+	// }
 
-		// Find correct html element
-		let rightListElement;
-		list.forEach((element) => {
-			if (element.textContent.includes(rightCountry)) {
-				rightListElement = element;
-				return;
-			}
-		});
-
-		return rightListElement;
-	}
-
-	//Dissable buttons
-	async function disableButtons() {
-		const list = document.querySelectorAll('.element'); //Get all list elements
-		list.forEach((element) => {
-			element.classList.add('disabled');
-		});
-	}
-
-	//Enable buttons
-	async function enableButtons() {
-		const list = document.querySelectorAll('.element'); //Get all list elements
-		list.forEach((element) => {
-			element.classList.remove('disabled');
-		});
-	}
-
-	async function rightAnswer() {
-		selected.classList.add('correct');
-		score = Number(score) + 10; //10 points for each correct answer. Sessionstorage is string type so it needs to be parsed.
-		sessionStorage.setItem('score', score); //Store score
-		await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
-		selected.classList.remove('correct');
-	}
-
-	async function wrongAnswer() {
-		const rightListElement = await getCorrectElement();
-		if (selected) {
-			selected.classList.add('incorrect');
-			rightListElement.classList.add('correct');
-			await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
-			selected.classList.remove('incorrect');
-			rightListElement.classList.remove('correct');
-		} else {
-			//If timer runs out
-			rightListElement.classList.add('correct');
-			await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
-			rightListElement.classList.remove('correct');
-		}
-	}
+	// //Enable buttons
+	// async function enableButtons() {
+	// 	const list = document.querySelectorAll('.element'); //Get all list elements
+	// 	list.forEach((element) => {
+	// 		element.classList.remove('disabled');
+	// 	});
+	// }
 
 	async function passRound() {
 		round++;
@@ -151,7 +115,6 @@
 		sessionStorage.removeItem('countries');
 		enableButtons();
 		selected = null; //Deselect button
-		console.log(round)
 		if (round <= 10) {
 			findNewData(); //Get new flag
 		}
@@ -160,9 +123,10 @@
 	$: {
 		// When times runs out
 		if (seconds === 0) {
+			console.log(seconds)
 			async function activateWrongAnswer() {
 				disableButtons();
-				await wrongAnswer();
+				await wrongAnswer(rightCountry, selected);
 				await passRound();
 			}
 			activateWrongAnswer();
@@ -185,11 +149,11 @@
 
 		// If selection is correct
 		if (selected.textContent === rightCountry) {
-			await rightAnswer();
+			score = await rightAnswer(selected, score);
 
-			// If selection is incorrect
+		// If selection is incorrect
 		} else {
-			await wrongAnswer(selected);
+			await wrongAnswer(rightCountry, selected);
 		}
 		await passRound(); // Next round
 	}
