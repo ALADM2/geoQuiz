@@ -1,6 +1,17 @@
 // @ts-nocheck
 
 /**
+ * Shuffle array countries
+ * @param {*} array 
+ */
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+/**
  * Find the correct country
  * @param {*} rightCountry 
  * @returns 
@@ -75,4 +86,4 @@ async function enableButtons() {
     });
 }
 
-export { rightAnswer, wrongAnswer, disableButtons, enableButtons }
+export { rightAnswer, wrongAnswer, disableButtons, enableButtons, shuffleArray }

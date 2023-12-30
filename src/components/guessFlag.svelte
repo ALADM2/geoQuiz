@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 	import { Circle3 } from 'svelte-loading-spinners';
 
-	import { rightAnswer, wrongAnswer, enableButtons, disableButtons } from '$lib/gameFunctions';
+	import { rightAnswer, wrongAnswer, enableButtons, disableButtons, shuffleArray } from '$lib/gameFunctions';
 
 	const countriesNum = 4;
 	let data;
@@ -63,14 +63,7 @@
 			sessionStorage.setItem('countries', countries);
 		}
 
-		//Shuffle array countries
-		function shuffleArray(array) {
-			for (let i = array.length - 1; i > 0; i--) {
-				const j = Math.floor(Math.random() * (i + 1));
-				[array[i], array[j]] = [array[j], array[i]];
-			}
-		}
-		shuffleArray(countries);
+		shuffleArray(countries); //Shuffle possible answers
 	};
 
 	//Fetch data on component mount
@@ -90,22 +83,6 @@
 		prepare();
 		findNewData(data, countries, restart, isClicked, randomNums, flag, rightCountry, countriesNum);
 	});
-
-	// //Dissable buttons
-	// async function disableButtons() {
-	// 	const list = document.querySelectorAll('.element'); //Get all list elements
-	// 	list.forEach((element) => {
-	// 		element.classList.add('disabled');
-	// 	});
-	// }
-
-	// //Enable buttons
-	// async function enableButtons() {
-	// 	const list = document.querySelectorAll('.element'); //Get all list elements
-	// 	list.forEach((element) => {
-	// 		element.classList.remove('disabled');
-	// 	});
-	// }
 
 	async function passRound() {
 		round++;
