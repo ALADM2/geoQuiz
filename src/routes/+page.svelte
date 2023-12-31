@@ -1,7 +1,7 @@
 <script>
-    import GuessFlag from "../components/guessFlag.svelte";
+    import MainMenu from "../components/mainMenu.svelte"
 </script>
 
 <div>
-    <GuessFlag />
+    <MainMenu />
 </div>
