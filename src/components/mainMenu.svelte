@@ -3,11 +3,11 @@
 	<div class="games">
 		<div class="column">
 			<a href="/guessFlag">Guess the Flag</a>
-			<a href="">Guess the Languaje</a>
+			<a href="" style="pointer-events: none; opacity: 0.5">Guess the Languaje</a>
 		</div>
 		<div class="column">
-			<a href="">Guess the Capital</a>
-			<a href="">Guess the Currency</a>
+			<a href="" style="pointer-events: none; opacity: 0.5">Guess the Capital</a>
+			<a href="" style="pointer-events: none; opacity: 0.5">Guess the Currency</a>
 		</div>
 	</div>
 </div>
