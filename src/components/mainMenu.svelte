@@ -3,11 +3,11 @@
 	<div class="games">
 		<div class="column">
 			<a href="/guessFlag">Guess the Flag</a>
-			<a href="/guessFlag">Guess the Languaje</a>
+			<a href="">Guess the Languaje</a>
 		</div>
 		<div class="column">
-			<a href="/guessFlag">Guess the Capital</a>
-			<a href="/guessFlag">Guess the Currency</a>
+			<a href="">Guess the Capital</a>
+			<a href="">Guess the Currency</a>
 		</div>
 	</div>
 </div>
@@ -99,6 +99,7 @@
 
 		.games {
 			flex-wrap: wrap;
+            margin-bottom: 20px;
 		}
 
 		.column {
