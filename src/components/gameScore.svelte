@@ -89,7 +89,8 @@
     }
 
 	@media (max-width: 900px) {
-		.scorePanel > button {
+		.scorePanel > button,
+		.scorePanel > a > button {
 			font-size: 5dvw;
 		}
         .perfectScore>span{
