@@ -28,6 +28,7 @@
 	}
 
 	$: {
+		console.log(restart)
 		if (restart) {
 			// Reset the timer to 5 when restart changes
 			seconds = 5;

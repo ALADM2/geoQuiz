@@ -7,6 +7,7 @@
 	import { Circle3 } from 'svelte-loading-spinners';
 
 	import { rightAnswer, wrongAnswer, enableButtons, disableButtons, shuffleArray } from '$lib/gameFunctions';
+	import { getRandCountry } from '$lib/getData';
 
 	const countriesNum = 4;
 	let data;
@@ -27,24 +28,27 @@
 	let isClicked = false;
 
 	const findNewData = async () => {
-		//Fetch data
-		const response = await fetch('https://restcountries.com/v3.1/all');
-		data = await response.json();
 		countries = []; //Empty array in every iteration
 		restart = false; //Set to false when new question
 		isClicked = false;
 		seconds = 5; //Reset seconds to 5
-		let random = sessionStorage.getItem('random') || Math.floor(Math.random() * data.length); //Generate random country number;
-		sessionStorage.setItem('random', random);
 
-		while (randomNums.includes(random)) {
-			random = Math.floor(Math.random() * data.length); //Generate random country number
-			sessionStorage.setItem('random', random);
-		}
+		//Fetch data
+		// const response = await fetch('https://restcountries.com/v3.1/all');
+		// data = await response.json();
+		// let random = sessionStorage.getItem('random') || Math.floor(Math.random() * data.length); //Generate random country number;
+		// sessionStorage.setItem('random', random);
 
-		randomNums = [...randomNums, random];
-		flag = data[random].flags.png; //Get random flag
-		rightCountry = data[random].name.common; //Flag selected country name
+		// while (randomNums.includes(random)) {
+		// 	random = Math.floor(Math.random() * data.length); //Generate random country number
+		// 	sessionStorage.setItem('random', random);
+		// }
+
+		let random = await getRandCountry(randomNums);
+		
+		randomNums = [...randomNums, random.num];
+		flag = random.country.flags.png; //Get random flag
+		rightCountry = random.country.name.common; //Flag selected country name
 		countries = sessionStorage.getItem('countries')
 			? sessionStorage.getItem('countries').split(',')
 			: [...countries, rightCountry]; //Push random country name to array
@@ -54,8 +58,8 @@
 			for (let i = 0; i < countriesNum - 1; i++) {
 				let newCountry;
 				do {
-					random = Math.floor(Math.random() * data.length); //Generate random country number
-					newCountry = data[random].name.common;
+					random.num = Math.floor(Math.random() * random.data.length); //Generate random country number
+					newCountry = random.data[random.num].name.common;
 				} while (countries.includes(newCountry));
 
 				countries = [...countries, newCountry]; //Push random country name to array
@@ -81,12 +85,13 @@
 			}
 		};
 		prepare();
-		findNewData(data, countries, restart, isClicked, randomNums, flag, rightCountry, countriesNum);
+		findNewData();
 	});
 
 	async function passRound() {
 		round++;
 		restart = true; //Activate restart timer in timer component after
+		console.log(restart)
 		sessionStorage.setItem('round', round); //Store round in case of refresh
 		sessionStorage.removeItem('random');
 		sessionStorage.removeItem('countries');
@@ -100,7 +105,6 @@
 	$: {
 		// When times runs out
 		if (seconds === 0) {
-			console.log(seconds)
 			async function activateWrongAnswer() {
 				disableButtons();
 				await wrongAnswer(rightCountry, selected);

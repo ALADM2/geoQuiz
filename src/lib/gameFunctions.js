@@ -42,7 +42,6 @@ async function rightAnswer(selected, score) {
     sessionStorage.setItem('score', score); //Store score
     await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
     selected.classList.remove('correct');
-    console.log(score)
     return score;
 }
 
