@@ -43,7 +43,7 @@
 		seconds = 5; //Reset seconds to 5
 		let random = sessionStorage.getItem('random') || Math.floor(Math.random() * data.length); //Generate random country number;
 		sessionStorage.setItem('random', random);
-		while (randomNums.includes(random) || !data[random].capital[0]) {
+		while (randomNums.includes(random) || !data[random].capital[0] || (data[random].capital[0]).length > 20) {
 			random = Math.floor(Math.random() * data.length); //Generate random country number
 			sessionStorage.setItem('random', random);
 		}
@@ -199,6 +199,7 @@
 		align-items: center;
 		min-width: 25dvw;
         max-width: 40dvh;
+        max-height: 98dvh;
 	}
 
 	.guessFlag > h1 {
@@ -300,6 +301,7 @@
 			align-items: center;
 			justify-content: space-around;
             max-width: none;
+            max-height: none;
 		}
 		.guessFlag > h1 {
 			font-size: 10dvw;
