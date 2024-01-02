@@ -53,6 +53,7 @@
 		if (countries.length < 4) {
 			for (let i = 0; i < countriesNum - 1; i++) {
 				let newCountry;
+				
 				do {
 					random = Math.floor(Math.random() * data.length); //Generate random country number
 					newCountry = data[random].name.common;
