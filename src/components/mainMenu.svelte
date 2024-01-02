@@ -6,7 +6,7 @@
 			<a href="" style="pointer-events: none; opacity: 0.5">Guess the Languaje</a>
 		</div>
 		<div class="column">
-			<a href="" style="pointer-events: none; opacity: 0.5">Guess the Capital</a>
+			<a href="/guessCapital">Guess the Capital</a>
 			<a href="" style="pointer-events: none; opacity: 0.5">Guess the Currency</a>
 		</div>
 	</div>
@@ -74,10 +74,7 @@
 	.column > a:hover,
 	.column > a:focus {
 		color: #2c4d3d;
-		box-shadow: inset 13em 0 0 0 #e2ca8e;
-		text-decoration: underline;
-		text-underline-offset: 20px;
-		text-decoration-thickness: 0.2dvw;
+		box-shadow: inset 15em 0 0 0 #e2ca8e;
 	}
 
 	@media (max-width: 900px) {
