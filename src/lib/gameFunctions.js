@@ -26,7 +26,7 @@ async function getCorrectElement(rightCountry) {
             return;
         }
     });
-
+    
     return rightListElement;
 }
 
@@ -42,7 +42,7 @@ async function rightAnswer(selected, score) {
     sessionStorage.setItem('score', score); //Store score
     await new Promise((resolve) => setTimeout(resolve, 2000)); //Stop app to see correct answer
     selected.classList.remove('correct');
-    console.log(score)
+
     return score;
 }
 
@@ -51,7 +51,7 @@ async function rightAnswer(selected, score) {
  */
 async function wrongAnswer(rightCountry, selected) {
     const rightListElement = await getCorrectElement(rightCountry);
-    console.log(rightListElement)
+
     if (selected) {
         selected.classList.add('incorrect');
         rightListElement.classList.add('correct');

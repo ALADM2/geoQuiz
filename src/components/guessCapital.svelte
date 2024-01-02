@@ -6,14 +6,20 @@
 	import { onMount } from 'svelte';
 	import { Circle3 } from 'svelte-loading-spinners';
 
-	import { rightAnswer, wrongAnswer, enableButtons, disableButtons, shuffleArray } from '$lib/gameFunctions';
+	import {
+		rightAnswer,
+		wrongAnswer,
+		enableButtons,
+		disableButtons,
+		shuffleArray
+	} from '$lib/gameFunctions';
 
-	const countriesNum = 4;
+	const capitalsNum = 4;
 	let data;
-	let flag;
-	let rightCountry;
+	let countryToGuess;
+	let rightCapital;
 	let newGame = false;
-	let countries = [];
+	let capitals = [];
 	let randomNums = []; //To check for duplicates
 	let selected = null;
 	let isCorrect = false;
@@ -30,41 +36,41 @@
 		//Fetch data
 		const response = await fetch('https://restcountries.com/v3.1/all');
 		data = await response.json();
-		countries = []; //Empty array in every iteration
+
+		capitals = []; //Empty array in every iteration
 		restart = false; //Set to false when new question
 		isClicked = false;
 		seconds = 5; //Reset seconds to 5
 		let random = sessionStorage.getItem('random') || Math.floor(Math.random() * data.length); //Generate random country number;
 		sessionStorage.setItem('random', random);
-
-		while (randomNums.includes(random)) {
+		while (randomNums.includes(random) || !data[random].capital[0]) {
 			random = Math.floor(Math.random() * data.length); //Generate random country number
 			sessionStorage.setItem('random', random);
 		}
 
 		randomNums = [...randomNums, random];
-		flag = data[random].flags.png; //Get random flag
-		rightCountry = data[random].name.common; //Flag selected country name
-		countries = sessionStorage.getItem('countries')
-			? sessionStorage.getItem('countries').split(',')
-			: [...countries, rightCountry]; //Push random country name to array
+		countryToGuess = data[random].name.common; //Get random flag
+		rightCapital = data[random].capital[0]; //Flag selected country name
+		capitals = sessionStorage.getItem('capitals')
+			? sessionStorage.getItem('capitals').split(',')
+			: [...capitals, rightCapital]; //Push random capital name to array
 
 		//Get random countries for answers
-		if (countries.length < 4) {
-			for (let i = 0; i < countriesNum - 1; i++) {
-				let newCountry;
-				
+		if (capitals.length < 4) {
+			for (let i = 0; i < capitalsNum - 1; i++) {
+				let newCapital;
+
 				do {
 					random = Math.floor(Math.random() * data.length); //Generate random country number
-					newCountry = data[random].name.common;
-				} while (countries.includes(newCountry));
+					newCapital = data[random].capital ? data[random].capital[0] : null;
+				} while (capitals.includes(newCapital) || !newCapital);
 
-				countries = [...countries, newCountry]; //Push random country name to array
+				capitals = [...capitals, newCapital]; //Push random country name to array
 			}
-			sessionStorage.setItem('countries', countries);
+			sessionStorage.setItem('capitals', capitals);
 		}
 
-		shuffleArray(countries); //Shuffle possible answers
+		shuffleArray(capitals); //Shuffle possible answers
 	};
 
 	//Fetch data on component mount
@@ -82,7 +88,7 @@
 			}
 		};
 		prepare();
-		findNewData(data, countries, restart, isClicked, randomNums, flag, rightCountry, countriesNum);
+		findNewData();
 	});
 
 	async function passRound() {
@@ -90,7 +96,7 @@
 		restart = true; //Activate restart timer in timer component after
 		sessionStorage.setItem('round', round); //Store round in case of refresh
 		sessionStorage.removeItem('random');
-		sessionStorage.removeItem('countries');
+		sessionStorage.removeItem('capitals');
 		enableButtons();
 		selected = null; //Deselect button
 		if (round <= 10) {
@@ -103,7 +109,7 @@
 		if (seconds === 0) {
 			async function activateWrongAnswer() {
 				disableButtons();
-				await wrongAnswer(rightCountry, selected);
+				await wrongAnswer(rightCapital, selected);
 				await passRound();
 			}
 			activateWrongAnswer();
@@ -123,14 +129,13 @@
 		isClicked = true;
 		selected = document.querySelector(`.element:nth-child(${index + 1})`); //Get selected html element
 		disableButtons(); //Dissable buttons
-
 		// If selection is correct
-		if (selected.textContent === rightCountry) {
+		if (selected.textContent === rightCapital) {
 			score = await rightAnswer(selected, score);
 
-		// If selection is incorrect
+			// If selection is incorrect
 		} else {
-			await wrongAnswer(rightCountry, selected);
+			await wrongAnswer(rightCapital, selected);
 		}
 		await passRound(); // Next round
 	}
@@ -145,17 +150,29 @@
 					<h2>Round&nbsp;&nbsp;{round}/10</h2>
 					<h2>Score: {score}</h2>
 				</div>
-				<img src={flag} alt="" />
+				<h1>{countryToGuess}</h1>
 				<div class="options">
 					<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
 					<ul class="countryList">
-						{#each countries as country, index}
-							<button value={country} class="element" on:click={() => handleClick(index)} class:correct={isCorrect} class:incorrect={isIncorrect} class:disabled={isDisabled}>{country}</button>
+						{#each capitals as capital, index}
+							<button
+								value={capital}
+								class="element"
+								on:click={() => handleClick(index)}
+								class:correct={isCorrect}
+								class:incorrect={isIncorrect}
+								class:disabled={isDisabled}>{capital}</button
+							>
 						{/each}
 					</ul>
 				</div>
 			{:else}
-				<GameScore {score} onNewGame={(v) => (newGame = v)} onChangeRound={(v) => (round = v)} onChangeScore={(v) => (score = v)}/>
+				<GameScore
+					{score}
+					onNewGame={(v) => (newGame = v)}
+					onChangeRound={(v) => (round = v)}
+					onChangeScore={(v) => (score = v)}
+				/>
 			{/if}
 		</div>
 	{:else}
@@ -180,11 +197,28 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		min-width: 25dvw;
+        max-width: 40dvh;
 	}
 
-	.guessFlag > img {
-		border-radius: 3px;
-		max-height: 30%;
+	.guessFlag > h1 {
+		font-family: 'Permanent Marker';
+		font-size: 3dvw;
+		-webkit-text-stroke: 0.1px #000000; /* For Safari and Chrome */
+		text-stroke: 0.1px black; /* For other browsers (may not be supported) */
+		color: #f5eedc; /* Set the text color */
+		letter-spacing: 3px;
+		text-shadow: 2px 2px 0px #ecb390;
+		border: 2px solid black;
+		border-radius: 30px;
+		padding: 20px 40px;
+		box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, 0.5);
+		border-radius: 60px;
+		background-color: #bccdb6;
+		text-align: center;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 95dvw;
 	}
 
 	.options {
@@ -265,8 +299,12 @@
 			flex-direction: column;
 			align-items: center;
 			justify-content: space-around;
+            max-width: none;
 		}
-		.options{
+		.guessFlag > h1 {
+			font-size: 10dvw;
+		}
+		.options {
 			margin-bottom: 30px;
 		}
 		.element {
