@@ -75,7 +75,7 @@
 	.column > a:focus {
 		color: #2c4d3d;
 		box-shadow: inset 15em 0 0 0 #e2ca8e;
-		font-size: 2.2dvw;
+		font-size: 2.1dvw;
 	}
 
 	@media (max-width: 900px) {
