@@ -36,17 +36,26 @@
 		//Fetch data
 		const response = await fetch('https://restcountries.com/v3.1/all');
 		data = await response.json();
-
 		capitals = []; //Empty array in every iteration
 		restart = false; //Set to false when new question
 		isClicked = false;
 		seconds = 5; //Reset seconds to 5
 		let random = sessionStorage.getItem('random') || Math.floor(Math.random() * data.length); //Generate random country number;
 		sessionStorage.setItem('random', random);
-		while (randomNums.includes(random) || !data[random].capital[0] || (data[random].capital[0]).length > 20) {
-			random = Math.floor(Math.random() * data.length); //Generate random country number
-			sessionStorage.setItem('random', random);
-		}
+
+        async function generateRandom() {
+            while (randomNums.includes(random) || !data[random].capital) {
+                random = Math.floor(Math.random() * data.length); //Generate random country number
+                sessionStorage.setItem('random', random);
+            }
+        }
+
+        try{
+            await generateRandom();
+        } catch (error){
+            console.error(`Error caught: ${error.message}, getting new data`);
+            await generateRandom();
+        }
 
 		randomNums = [...randomNums, random];
 		countryToGuess = data[random].name.common; //Get random flag
@@ -197,8 +206,8 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		min-width: 25dvw;
-        max-width: 40dvh;
+		min-width: 30dvw;
+        max-width: 60dvh;
         max-height: 98dvh;
 	}
 
