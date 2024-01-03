@@ -58,8 +58,8 @@
         }
 
 		randomNums = [...randomNums, random];
-		countryToGuess = data[random].name.common; //Get random flag
-		rightCapital = data[random].capital[0]; //Flag selected country name
+		countryToGuess = data[random].name.common; //Get random country
+		rightCapital = data[random].capital[0]; //Capital selected country name
 		capitals = sessionStorage.getItem('capitals')
 			? sessionStorage.getItem('capitals').split(',')
 			: [...capitals, rightCapital]; //Push random capital name to array
@@ -109,7 +109,7 @@
 		enableButtons();
 		selected = null; //Deselect button
 		if (round <= 10) {
-			findNewData(); //Get new flag
+			findNewData(); //Get new Capital
 		}
 	}
 
@@ -152,7 +152,7 @@
 
 <div class="main">
 	{#if isReady}
-		<div class="guessFlag">
+		<div class="guessCapital">
 			{#if round <= 10}
 				<!-- 10 rounds -->
 				<div class="data">
@@ -162,7 +162,7 @@
 				<h1>{countryToGuess}</h1>
 				<div class="options">
 					<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
-					<ul class="countryList">
+					<ul class="capitalList">
 						{#each capitals as capital, index}
 							<button
 								value={capital}
@@ -198,7 +198,7 @@
 		background-color: #bdd2b6;
 	}
 
-	.guessFlag {
+	.guessCapital {
 		background-color: #f8ede3;
 		padding: 50px;
 		border-radius: 10px;
@@ -211,7 +211,7 @@
         max-height: 98dvh;
 	}
 
-	.guessFlag > h1 {
+	.guessCapital > h1 {
 		font-family: 'Permanent Marker';
 		font-size: 3dvw;
 		-webkit-text-stroke: 0.1px #000000; /* For Safari and Chrome */
@@ -244,7 +244,7 @@
 		width: 100%;
 	}
 
-	.countryList {
+	.capitalList {
 		list-style: none;
 		padding: 0;
 		margin: 0;
@@ -302,7 +302,7 @@
 	}
 
 	@media (max-width: 900px) {
-		.guessFlag {
+		.guessCapital {
 			height: 100%;
 			width: 100%;
 			display: flex;
@@ -312,7 +312,7 @@
             max-width: none;
             max-height: none;
 		}
-		.guessFlag > h1 {
+		.guessCapital > h1 {
 			font-size: 10dvw;
 		}
 		.options {
