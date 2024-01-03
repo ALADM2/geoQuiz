@@ -68,13 +68,14 @@
 		color: #125737;
 		background-color: #f5eedc;
 		text-decoration: none;
-		transition: box-shadow 0.3s ease;
+		transition: box-shadow 0.3s ease, font-size 0.3s ease;
 	}
 
 	.column > a:hover,
 	.column > a:focus {
 		color: #2c4d3d;
 		box-shadow: inset 15em 0 0 0 #e2ca8e;
+		font-size: 2.2dvw;
 	}
 
 	@media (max-width: 900px) {
