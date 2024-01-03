@@ -3,7 +3,7 @@
 	<div class="games">
 		<div class="column">
 			<a href="/guessFlag">Guess the Flag</a>
-			<a href="" style="pointer-events: none; opacity: 0.5">Guess the Languaje</a>
+			<a href="/guessLanguage">Guess the Language</a>
 		</div>
 		<div class="column">
 			<a href="/guessCapital">Guess the Capital</a>
