@@ -14,9 +14,11 @@
 		shuffleArray
 	} from '$lib/gameFunctions';
 
+	let screenWidth;
 	const languagesNum = 4;
 	let data;
 	let countryToGuess;
+	let countryLength; //Take country length to change size depending on length
 	let rightLanguage;
 	let newGame = false;
 	let languages = [];
@@ -31,7 +33,7 @@
 	let restart = false; //Exported from timer
 	let seconds = 5; //Exported from timer
 	let isClicked = false;
-
+	
 	const findNewData = async () => {
 		//Fetch data
 		const response = await fetch('https://restcountries.com/v3.1/all');
@@ -42,51 +44,51 @@
 		seconds = 5; //Reset seconds to 5
 		let random = sessionStorage.getItem('random') || Math.floor(Math.random() * data.length); //Generate random country number;
 		sessionStorage.setItem('random', random);
-
         async function generateRandom() {
             while (randomNums.includes(random) || !data[random].languages) {
-                random = Math.floor(Math.random() * data.length); //Generate random country number
+				random = Math.floor(Math.random() * data.length); //Generate random country number
                 sessionStorage.setItem('random', random);
             }
         }
-
+		
         try{
-            await generateRandom();
+			await generateRandom();
         } catch (error){
-            console.error(`Error caught: ${error.message}, getting new data`);
+			console.error(`Error caught: ${error.message}, getting new data`);
             await generateRandom();
         }
-
+		
 		randomNums = [...randomNums, random];
 		countryToGuess = data[random].name.common; //Get random country
+		countryLength = countryToGuess.length; //Take country length to change size depending on length
 		rightLanguage = Object.values(data[random].languages).join(', '); //Language selected country name
-		console.log(rightLanguage)
 		languages = sessionStorage.getItem('languages')
-			? sessionStorage.getItem('languages').split(',')
-			: [...languages, rightLanguage]; //Push random language name to array
-
+		? sessionStorage.getItem('languages').split(',')
+		: [...languages, rightLanguage]; //Push random language name to array
+		
 		//Get random countries for answers
 		if (languages.length < 4) {
 			for (let i = 0; i < languagesNum - 1; i++) {
 				let newLanguage;
-
+				
 				do {
 					random = Math.floor(Math.random() * data.length); //Generate random country number
 					newLanguage = data[random].languages ? Object.values(data[random].languages).join(', ') : null;
 				} while (languages.includes(newLanguage) || !newLanguage);
-
+				
 				languages = [...languages, newLanguage]; //Push random country name to array
 			}
 			sessionStorage.setItem('languages', languages);
 		}
-
+		
 		shuffleArray(languages); //Shuffle possible answers
 	};
-
+	
 	//Fetch data on component mount
 	onMount(async () => {
 		score = sessionStorage.getItem('score') || score; //Use stored score to keep it on refresh
 		round = sessionStorage.getItem('round') || round; //Use stored round to keep it on refresh
+		screenWidth = window.innerWidth;
 		const prepare = async () => {
 			try {
 				// Artificially delay for 2 seconds to simulate a slow loading
@@ -98,7 +100,7 @@
 			}
 		};
 		prepare();
-		findNewData();
+		await findNewData();
 	});
 
 	async function passRound() {
@@ -149,6 +151,8 @@
 		}
 		await passRound(); // Next round
 	}
+
+
 </script>
 
 <div class="main">
@@ -160,19 +164,23 @@
 					<h2>Round&nbsp;&nbsp;{round}/10</h2>
 					<h2>Score: {score}</h2>
 				</div>
-				<h1>{countryToGuess}</h1>
+				{#if screenWidth > 900}
+					<h1 class="country" style={countryLength >= 17 ? "font-size:2.3dvw" : "font-size:3dvw" }>{countryToGuess}</h1>
+				{:else}
+					<h1 class="country" style={countryLength >= 17 ? "font-size:8dvw" : "font-size:10dvw" }>{countryToGuess}</h1>
+				{/if}
 				<div class="options">
 					<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
 					<ul class="languageList">
 						{#each languages as language, index}
-							<button
-								value={language}
-								class="element"
-								on:click={() => handleClick(index)}
-								class:correct={isCorrect}
-								class:incorrect={isIncorrect}
-								class:disabled={isDisabled}>{language}</button
-							>
+						<button
+						value={language}
+						class="element"
+						on:click={() => handleClick(index)}
+						class:correct={isCorrect}
+						class:incorrect={isIncorrect}
+						class:disabled={isDisabled}>
+						<span>{language}</span></button>
 						{/each}
 					</ul>
 				</div>
@@ -258,17 +266,24 @@
 	.element {
 		width: 100%;
 		border: none;
-		display: flex;
-		padding: 10px;
+		display: flex;	
 		background-color: white;
 		margin-top: 15px;
 		border-radius: 5px;
 		box-shadow: 3px 3px 0px #798777;
 		cursor: pointer;
+	}
+	.element>span{
+		padding: 10px;
+		width: 95%;
+		display: inline-block;
 		text-align: left;
 		font-family: 'Chakra Petch';
 		font-weight: bold;
 		font-size: 1.3dvw;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	.element:hover {
 		background-color: #a2b29f;
@@ -314,7 +329,7 @@
             max-height: none;
 		}
 		.guessLanguage > h1 {
-			font-size: 10dvw;
+			/* font-size: 10dvw; */
 		}
 		.options {
 			margin-bottom: 30px;
@@ -323,6 +338,8 @@
 			height: 7dvh;
 			display: flex;
 			align-items: center;
+		}
+		.element>span{
 			font-size: 5dvw;
 		}
 		.element:hover {
