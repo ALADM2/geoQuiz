@@ -94,6 +94,7 @@
 			font-size: 12dvw;
             text-shadow: 3px 3px 0px #ecb390;
             box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5);
+			-webkit-text-stroke: 0.5px #dd4a48; /* For Safari and Chrome */
 		}
 
 		.games {
