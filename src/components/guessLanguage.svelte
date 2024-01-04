@@ -100,7 +100,7 @@
 			}
 		};
 		prepare();
-		await findNewData();
+		findNewData();
 	});
 
 	async function passRound() {
