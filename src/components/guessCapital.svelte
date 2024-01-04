@@ -89,6 +89,7 @@
 	onMount(async () => {
 		score = sessionStorage.getItem('score') || score; //Use stored score to keep it on refresh
 		round = sessionStorage.getItem('round') || round; //Use stored round to keep it on refresh
+		sessionStorage.removeItem('capitals'); //Remove list of capitals on mount
 		screenWidth = window.innerWidth;
 		const prepare = async () => {
 			try {
@@ -321,7 +322,7 @@
             max-height: none;
 		}
 		.guessCapital > h1 {
-			/* font-size: 10dvw; */
+			-webkit-text-stroke: 0.5px #000000; /* For Safari and Chrome */
 		}
 		.options {
 			margin-bottom: 30px;
