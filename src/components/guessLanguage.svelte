@@ -165,14 +165,14 @@
 					<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
 					<ul class="languageList">
 						{#each languages as language, index}
-							<button
-								value={language}
-								class="element"
-								on:click={() => handleClick(index)}
-								class:correct={isCorrect}
-								class:incorrect={isIncorrect}
-								class:disabled={isDisabled}>{language}</button
-							>
+						<button
+						value={language}
+						class="element"
+						on:click={() => handleClick(index)}
+						class:correct={isCorrect}
+						class:incorrect={isIncorrect}
+						class:disabled={isDisabled}>
+						<span>{language}</span></button>
 						{/each}
 					</ul>
 				</div>
@@ -258,17 +258,24 @@
 	.element {
 		width: 100%;
 		border: none;
-		display: flex;
-		padding: 10px;
+		display: flex;	
 		background-color: white;
 		margin-top: 15px;
 		border-radius: 5px;
 		box-shadow: 3px 3px 0px #798777;
 		cursor: pointer;
+	}
+	.element>span{
+		padding: 10px;
+		width: 95%;
+		display: inline-block;
 		text-align: left;
 		font-family: 'Chakra Petch';
 		font-weight: bold;
 		font-size: 1.3dvw;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	.element:hover {
 		background-color: #a2b29f;

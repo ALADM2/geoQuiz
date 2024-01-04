@@ -55,6 +55,7 @@
 		margin: 10px;
 		padding: 50px 20px;
 		height: -webkit-fill-available;
+		width: 25dvw;
 		min-height: 80px;
 		cursor: pointer;
 		border: none;
@@ -108,12 +109,14 @@
 		.column > a {
 			min-height: 0;
 			font-size: 5dvw;
+			width: unset;
 		}
 
 		.column > a:hover,
 		.column > a:focus {
 			color: #2c4d3d;
 			background-color: #e2ca8e;
+			font-size: 5.1dvw;
 		}
 	}
 </style>
