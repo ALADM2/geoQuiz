@@ -7,7 +7,6 @@
 	let round = 1;
 
 	function handleClick() {
-		console.log("A ver hombre")
 		score = 0;
         sessionStorage.setItem('score', score);
         sessionStorage.setItem('round', round);

@@ -14,14 +14,14 @@
 		shuffleArray
 	} from '$lib/gameFunctions';
 
+	const currenciesNum = 4;
 	let screenWidth;
-	const languagesNum = 4;
 	let data;
 	let countryToGuess;
 	let countryLength; //Take country length to change size depending on length
-	let rightLanguage;
+	let rightCurrency;
 	let newGame = false;
-	let languages = [];
+	let currencies = [];
 	let randomNums = []; //To check for duplicates
 	let selected = null;
 	let isCorrect = false;
@@ -33,62 +33,69 @@
 	let restart = false; //Exported from timer
 	let seconds = 5; //Exported from timer
 	let isClicked = false;
-	
+
 	const findNewData = async () => {
 		//Fetch data
 		const response = await fetch('https://restcountries.com/v3.1/all');
 		data = await response.json();
-		languages = []; //Empty array in every iteration
+		currencies = []; //Empty array in every iteration
 		restart = false; //Set to false when new question
 		isClicked = false;
 		seconds = 5; //Reset seconds to 5
 		let random = sessionStorage.getItem('random') || Math.floor(Math.random() * data.length); //Generate random country number;
 		sessionStorage.setItem('random', random);
+
         async function generateRandom() {
-            while (randomNums.includes(random) || !data[random].languages) {
-				random = Math.floor(Math.random() * data.length); //Generate random country number
+            while (randomNums.includes(random) || !data[random].currencies) {
+                random = Math.floor(Math.random() * data.length); //Generate random country number
                 sessionStorage.setItem('random', random);
             }
         }
-		
+
         try{
-			await generateRandom();
+            await generateRandom();
         } catch (error){
-			console.error(`Error caught: ${error.message}, getting new data`);
+            console.error(`Error caught: ${error.message}, getting new data`);
             await generateRandom();
         }
-		
+
 		randomNums = [...randomNums, random];
 		countryToGuess = data[random].name.common; //Get random country
 		countryLength = countryToGuess.length; //Take country length to change size depending on length
-		rightLanguage = Object.values(data[random].languages).join(', '); //Language selected country name
-		languages = sessionStorage.getItem('languages')
-		? sessionStorage.getItem('languages').split(',')
-		: [...languages, rightLanguage]; //Push random language name to array
-		
+        async function getCurrency(random) {
+            const wholeRightCurrency = Object.values(data[random].currencies)[0].name.split(' '); //Get first object in currencies and divide string into array
+            const rightCurrencyLowCase = wholeRightCurrency.pop(); //Select last element of array
+            const rightCurrency = rightCurrencyLowCase.charAt(0).toUpperCase() + rightCurrencyLowCase.slice(1); //Convert first letter to upper case
+            return rightCurrency;
+        }
+        rightCurrency = await getCurrency(random);
+		currencies = sessionStorage.getItem('currencies')
+			? sessionStorage.getItem('currencies').split(',')
+			: [...currencies, rightCurrency]; //Push random currency name to array
+
 		//Get random countries for answers
-		if (languages.length < 4) {
-			for (let i = 0; i < languagesNum - 1; i++) {
-				let newLanguage;
-				
+		if (currencies.length < 4) {
+			for (let i = 0; i < currenciesNum - 1; i++) {
+				let newCurrency;
+
 				do {
 					random = Math.floor(Math.random() * data.length); //Generate random country number
-					newLanguage = data[random].languages ? Object.values(data[random].languages).join(', ') : null;
-				} while (languages.includes(newLanguage) || !newLanguage);
-				
-				languages = [...languages, newLanguage]; //Push random country name to array
+					newCurrency = data[random].currencies ? await getCurrency(random) : null;
+				} while (currencies.includes(newCurrency) || !newCurrency);
+
+				currencies = [...currencies, newCurrency]; //Push random country name to array
 			}
-			sessionStorage.setItem('languages', languages);
+			sessionStorage.setItem('currencies', currencies);
 		}
-		
-		shuffleArray(languages); //Shuffle possible answers
+
+		shuffleArray(currencies); //Shuffle possible answers
 	};
-	
+
 	//Fetch data on component mount
 	onMount(async () => {
 		score = sessionStorage.getItem('score') || score; //Use stored score to keep it on refresh
 		round = sessionStorage.getItem('round') || round; //Use stored round to keep it on refresh
-		sessionStorage.removeItem('languages'); //Remove list of languages on mount
+		sessionStorage.removeItem('currencies'); //Remove list of currencies on mount
 		screenWidth = window.innerWidth;
 		const prepare = async () => {
 			try {
@@ -109,11 +116,11 @@
 		restart = true; //Activate restart timer in timer component after
 		sessionStorage.setItem('round', round); //Store round in case of refresh
 		sessionStorage.removeItem('random');
-		sessionStorage.removeItem('languages');
+		sessionStorage.removeItem('currencies');
 		enableButtons();
 		selected = null; //Deselect button
 		if (round <= 10) {
-			findNewData(); //Get new language
+			findNewData(); //Get new Currency
 		}
 	}
 
@@ -122,7 +129,7 @@
 		if (seconds === 0) {
 			async function activateWrongAnswer() {
 				disableButtons();
-				await wrongAnswer(rightLanguage, selected);
+				await wrongAnswer(rightCurrency, selected);
 				await passRound();
 			}
 			activateWrongAnswer();
@@ -143,22 +150,20 @@
 		selected = document.querySelector(`.element:nth-child(${index + 1})`); //Get selected html element
 		disableButtons(); //Dissable buttons
 		// If selection is correct
-		if (selected.textContent === rightLanguage) {
+		if (selected.textContent === rightCurrency) {
 			score = await rightAnswer(selected, score);
 
 			// If selection is incorrect
 		} else {
-			await wrongAnswer(rightLanguage, selected);
+			await wrongAnswer(rightCurrency, selected);
 		}
 		await passRound(); // Next round
 	}
-
-
 </script>
 
 <div class="main">
 	{#if isReady}
-		<div class="guessLanguage">
+		<div class="guessCurrency">
 			{#if round <= 10}
 				<!-- 10 rounds -->
 				<div class="data">
@@ -172,16 +177,16 @@
 				{/if}
 				<div class="options">
 					<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
-					<ul class="languageList">
-						{#each languages as language, index}
-						<button
-						value={language}
-						class="element"
-						on:click={() => handleClick(index)}
-						class:correct={isCorrect}
-						class:incorrect={isIncorrect}
-						class:disabled={isDisabled}>
-						<span>{language}</span></button>
+					<ul class="currencyList">
+						{#each currencies as currency, index}
+							<button
+								value={currency}
+								class="element"
+								on:click={() => handleClick(index)}
+								class:correct={isCorrect}
+								class:incorrect={isIncorrect}
+								class:disabled={isDisabled}>{currency}</button
+							>
 						{/each}
 					</ul>
 				</div>
@@ -208,7 +213,7 @@
 		background-color: #bdd2b6;
 	}
 
-	.guessLanguage {
+	.guessCurrency {
 		background-color: #f8ede3;
 		padding: 50px;
 		border-radius: 10px;
@@ -221,7 +226,7 @@
         max-height: 98dvh;
 	}
 
-	.guessLanguage > h1 {
+	.guessCurrency > h1 {
 		font-family: 'Permanent Marker';
 		font-size: 3dvw;
 		-webkit-text-stroke: 0.1px #000000; /* For Safari and Chrome */
@@ -254,7 +259,7 @@
 		width: 100%;
 	}
 
-	.languageList {
+	.currencyList {
 		list-style: none;
 		padding: 0;
 		margin: 0;
@@ -267,24 +272,17 @@
 	.element {
 		width: 100%;
 		border: none;
-		display: flex;	
+		display: flex;
+		padding: 10px;
 		background-color: white;
 		margin-top: 15px;
 		border-radius: 5px;
 		box-shadow: 3px 3px 0px #798777;
 		cursor: pointer;
-	}
-	.element>span{
-		padding: 10px;
-		width: 95%;
-		display: inline-block;
 		text-align: left;
 		font-family: 'Chakra Petch';
 		font-weight: bold;
 		font-size: 1.3dvw;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 	.element:hover {
 		background-color: #a2b29f;
@@ -319,7 +317,7 @@
 	}
 
 	@media (max-width: 900px) {
-		.guessLanguage {
+		.guessCurrency {
 			height: 100%;
 			width: 100%;
 			display: flex;
@@ -329,7 +327,7 @@
             max-width: none;
             max-height: none;
 		}
-		.guessLanguage > h1 {
+		.guessCurrency > h1 {
 			-webkit-text-stroke: 0.5px #000000; /* For Safari and Chrome */
 		}
 		.options {
@@ -340,7 +338,7 @@
 			display: flex;
 			align-items: center;
 		}
-		.element>span{
+		.element{
 			font-size: 5dvw;
 		}
 		.element:hover {

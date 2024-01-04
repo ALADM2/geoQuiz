@@ -7,7 +7,7 @@
 		</div>
 		<div class="column">
 			<a href="/guessCapital">Guess the Capital</a>
-			<a href="" style="pointer-events: none; opacity: 0.5">Guess the Currency</a>
+			<a href="/guessCurrency">Guess the Currency</a>
 		</div>
 	</div>
 </div>
