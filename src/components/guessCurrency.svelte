@@ -231,7 +231,7 @@
 		font-size: 3dvw;
 		-webkit-text-stroke: 0.1px #000000; /* For Safari and Chrome */
 		text-stroke: 0.1px black; /* For other browsers (may not be supported) */
-		color: #f5eedc; /* Set the text color */
+		color: #ffffff; /* Set the text color */
 		letter-spacing: 3px;
 		text-shadow: 2px 2px 0px #ecb390;
 		border: 2px solid black;
@@ -328,7 +328,7 @@
             max-height: none;
 		}
 		.guessCurrency > h1 {
-			-webkit-text-stroke: 0.5px #000000; /* For Safari and Chrome */
+			-webkit-text-stroke: 1px #000000; /* For Safari and Chrome */
 		}
 		.options {
 			margin-bottom: 30px;
