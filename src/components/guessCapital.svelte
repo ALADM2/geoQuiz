@@ -15,8 +15,10 @@
 	} from '$lib/gameFunctions';
 
 	const capitalsNum = 4;
+	let screenWidth;
 	let data;
 	let countryToGuess;
+	let countryLength; //Take country length to change size depending on length
 	let rightCapital;
 	let newGame = false;
 	let capitals = [];
@@ -59,6 +61,7 @@
 
 		randomNums = [...randomNums, random];
 		countryToGuess = data[random].name.common; //Get random country
+		countryLength = countryToGuess.length; //Take country length to change size depending on length
 		rightCapital = data[random].capital[0]; //Capital selected country name
 		capitals = sessionStorage.getItem('capitals')
 			? sessionStorage.getItem('capitals').split(',')
@@ -86,6 +89,7 @@
 	onMount(async () => {
 		score = sessionStorage.getItem('score') || score; //Use stored score to keep it on refresh
 		round = sessionStorage.getItem('round') || round; //Use stored round to keep it on refresh
+		screenWidth = window.innerWidth;
 		const prepare = async () => {
 			try {
 				// Artificially delay for 2 seconds to simulate a slow loading
@@ -159,7 +163,11 @@
 					<h2>Round&nbsp;&nbsp;{round}/10</h2>
 					<h2>Score: {score}</h2>
 				</div>
-				<h1>{countryToGuess}</h1>
+				{#if screenWidth > 900}
+					<h1 class="country" style={countryLength >= 17 ? "font-size:2.3dvw" : "font-size:3dvw" }>{countryToGuess}</h1>
+				{:else}
+					<h1 class="country" style={countryLength >= 17 ? "font-size:8dvw" : "font-size:10dvw" }>{countryToGuess}</h1>
+				{/if}
 				<div class="options">
 					<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
 					<ul class="capitalList">
@@ -313,7 +321,7 @@
             max-height: none;
 		}
 		.guessCapital > h1 {
-			font-size: 10dvw;
+			/* font-size: 10dvw; */
 		}
 		.options {
 			margin-bottom: 30px;
@@ -322,6 +330,8 @@
 			height: 7dvh;
 			display: flex;
 			align-items: center;
+		}
+		.element{
 			font-size: 5dvw;
 		}
 		.element:hover {
