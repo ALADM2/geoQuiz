@@ -7,6 +7,7 @@
 	let round = 1;
 
 	function handleClick() {
+		console.log("A ver hombre")
 		score = 0;
         sessionStorage.setItem('score', score);
         sessionStorage.setItem('round', round);
@@ -30,7 +31,7 @@
 		{/if}
 	</div>
 	<button on:click={handleClick}>Play Again!</button>
-	<a href="/"><button on:click={handleClick}>Main Menu</button></a>
+	<a on:click={handleClick} href="/"><button >Main Menu</button></a>
 </div>
 
 <style>

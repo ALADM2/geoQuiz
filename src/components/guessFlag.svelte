@@ -71,6 +71,7 @@
 	onMount(async () => {
 		score = sessionStorage.getItem('score') || score; //Use stored score to keep it on refresh
 		round = sessionStorage.getItem('round') || round; //Use stored round to keep it on refresh
+		sessionStorage.removeItem('countries'); //Remove list of countries on mount
 		const prepare = async () => {
 			try {
 				// Artificially delay for 2 seconds to simulate a slow loading

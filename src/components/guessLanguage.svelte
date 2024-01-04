@@ -39,6 +39,7 @@
 		const response = await fetch('https://restcountries.com/v3.1/all');
 		data = await response.json();
 		languages = []; //Empty array in every iteration
+		console.log(languages)
 		restart = false; //Set to false when new question
 		isClicked = false;
 		seconds = 5; //Reset seconds to 5
@@ -88,6 +89,7 @@
 	onMount(async () => {
 		score = sessionStorage.getItem('score') || score; //Use stored score to keep it on refresh
 		round = sessionStorage.getItem('round') || round; //Use stored round to keep it on refresh
+		sessionStorage.removeItem('languages'); //Remove list of languages on mount
 		screenWidth = window.innerWidth;
 		const prepare = async () => {
 			try {
@@ -329,7 +331,7 @@
             max-height: none;
 		}
 		.guessLanguage > h1 {
-			/* font-size: 10dvw; */
+			-webkit-text-stroke: 0.5px #000000; /* For Safari and Chrome */
 		}
 		.options {
 			margin-bottom: 30px;
