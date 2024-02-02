@@ -7,36 +7,56 @@
 	let isDisabled = false;
 	let fontLoaded = false;
 
+	// onMount(() => {
+	// 	const links = document.querySelectorAll('a');
+	// 	links.forEach((e) => {
+	// 		e.classList.remove('disable');
+	// 		e.addEventListener('click', function (event) {
+	// 			// Prevent the default behavior (immediate redirection)
+	// 			event.preventDefault();
+	// 			console.log('hello');
+	// 			const otherLinks = document.querySelectorAll(`a:not(#${event.target.id})`);
+	// 			otherLinks.forEach((e) => {
+	// 				e.classList.add('disabled');
+	// 			});
+	// 			// Set a timeout for the desired delay (in milliseconds)
+	// 			const delayInMilliseconds = 1000; // 1000 milliseconds (1 second)
+	// 			setTimeout(function () {
+	// 				// Manually redirect after the delay
+	// 				window.location.href = event.target.href;
+	// 			}, delayInMilliseconds);
+	// 		});
+	// 	});
+	// });
+
 	onMount(() => {
 		// Check if the font is loaded
 		const font1 = new FontFaceObserver('Permanent Marker');
-		const font2 = new FontFaceObserver('Rubik Doodle Shadow')
+		const font2 = new FontFaceObserver('Rubik Doodle Shadow');
 		font1.load().then(() => {
 			font2.load().then(() => {
 				fontLoaded = true;
-			})
-		});
-
-		const links = document.querySelectorAll('a');
-		links.forEach((e) => {
-			e.classList.remove('disable');
-			e.addEventListener('click', function (event) {
-				// Prevent the default behavior (immediate redirection)
-				event.preventDefault();
-				console.log(event.target.id);
-				const otherLinks = document.querySelectorAll(`a:not(#${event.target.id})`);
-				otherLinks.forEach((e) => {
-					e.classList.add('disabled');
+				const links = document.querySelectorAll('a');
+				links.forEach((e) => {
+					e.classList.remove('disabled');
 				});
-				// Set a timeout for the desired delay (in milliseconds)
-				const delayInMilliseconds = 1000; // 1000 milliseconds (1 second)
-				setTimeout(function () {
-					// Manually redirect after the delay
-					window.location.href = event.target.href;
-				}, delayInMilliseconds);
 			});
 		});
 	});
+
+	async function delay(event) {
+		event.preventDefault();
+		const otherLinks = document.querySelectorAll(`a`);
+		otherLinks.forEach((e) => {
+			e.classList.add('disabled');
+		});
+		// Set a timeout for the desired delay (in milliseconds)
+		const delayInMilliseconds = 500; // 500 milliseconds (1/2 second)
+		setTimeout(function () {
+			// Manually redirect after the delay
+			window.location.href = event.target.href;
+		}, delayInMilliseconds);
+	}
 </script>
 
 <div class="menu">
@@ -44,12 +64,12 @@
 		<h1 class="title">Geo Quiz</h1>
 		<div class="games">
 			<div class="column">
-				<a id="a" class:disabled={isDisabled} href="/guessFlag">Guess the Flag</a>
-				<a id="b" class:disabled={isDisabled} href="/guessLanguage">Guess the Language</a>
+				<a on:click={delay} id="a" class:disabled={isDisabled} href="/guessFlag">Guess the Flag</a>
+				<a on:click={delay} id="b" class:disabled={isDisabled} href="/guessLanguage">Guess the Language</a>
 			</div>
 			<div class="column">
-				<a id="c" class:disabled={isDisabled} href="/guessCapital">Guess the Capital</a>
-				<a id="d" class:disabled={isDisabled} href="/guessCurrency">Guess the Currency</a>
+				<a on:click={delay} id="c" class:disabled={isDisabled} href="/guessCapital">Guess the Capital</a>
+				<a on:click={delay} id="d" class:disabled={isDisabled} href="/guessCurrency">Guess the Currency</a>
 			</div>
 		</div>
 	{/if}
