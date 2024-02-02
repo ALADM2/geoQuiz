@@ -3,6 +3,7 @@
 	export let score = 0;
 	export let onChangeRound;
 	export let onChangeScore;
+	export let onNewGame;
 	let round = 1;
 
 	function handleClick() {
@@ -11,6 +12,7 @@
         sessionStorage.setItem('round', round);
 		onChangeScore(score);
 		onChangeRound(round);
+		onNewGame(true);
 	}
 </script>
 
@@ -28,6 +30,7 @@
 		{/if}
 	</div>
 	<button on:click={handleClick}>Play Again!</button>
+	<a on:click={handleClick} href="/"><button >Main Menu</button></a>
 </div>
 
 <style>
@@ -51,7 +54,8 @@
 		gap: 10px;
 	}
 
-	.scorePanel > button {
+	.scorePanel > button,
+	.scorePanel > a > button{
 		padding: 20px;
 		font-size: larger;
 		border-radius: 10px;
@@ -64,11 +68,13 @@
 		border: none;
 		box-shadow: 4px 4px 0px #798777;
 	}
-	.scorePanel > button:hover {
+	.scorePanel > button:hover,
+	.scorePanel > a > button:hover {
 		background-color: #a2b29f;
 		color: white;
 	}
-	.scorePanel > button:active {
+	.scorePanel > button:active,
+	.scorePanel > a > button:active {
 		box-shadow: 0 0 0;
 		transform: translateY(4px);
 	}
@@ -83,7 +89,8 @@
     }
 
 	@media (max-width: 900px) {
-		.scorePanel > button {
+		.scorePanel > button,
+		.scorePanel > a > button {
 			font-size: 5dvw;
 		}
         .perfectScore>span{
