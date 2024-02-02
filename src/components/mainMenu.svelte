@@ -8,22 +8,13 @@
 	let fontLoaded = false;
 
 	onMount(() => {
-		// Check if the font is loaded
-		const font1 = new FontFaceObserver('Permanent Marker');
-		const font2 = new FontFaceObserver('Rubik Doodle Shadow')
-		font1.load().then(() => {
-			font2.load().then(() => {
-				fontLoaded = true;
-			})
-		});
-
 		const links = document.querySelectorAll('a');
 		links.forEach((e) => {
 			e.classList.remove('disable');
 			e.addEventListener('click', function (event) {
 				// Prevent the default behavior (immediate redirection)
 				event.preventDefault();
-				console.log(event.target.id);
+				console.log('hello');
 				const otherLinks = document.querySelectorAll(`a:not(#${event.target.id})`);
 				otherLinks.forEach((e) => {
 					e.classList.add('disabled');
@@ -37,10 +28,21 @@
 			});
 		});
 	});
+
+	// onMount(() => {
+	// 	// Check if the font is loaded
+	// 	const font1 = new FontFaceObserver('Permanent Marker');
+	// 	const font2 = new FontFaceObserver('Rubik Doodle Shadow');
+	// 	font1.load().then(() => {
+	// 		font2.load().then(() => {
+	// 			fontLoaded = true;
+	// 		});
+	// 	});
+	// });
 </script>
 
 <div class="menu">
-	{#if fontLoaded}
+	<!-- {#if fontLoaded} -->
 		<h1 class="title">Geo Quiz</h1>
 		<div class="games">
 			<div class="column">
@@ -52,7 +54,7 @@
 				<a id="d" class:disabled={isDisabled} href="/guessCurrency">Guess the Currency</a>
 			</div>
 		</div>
-	{/if}
+	<!-- {/if} -->
 </div>
 
 <style>
