@@ -2,20 +2,31 @@
 	// @ts-nocheck
 
 	import { onMount } from 'svelte';
+	import FontFaceObserver from 'fontfaceobserver';
 
 	let isDisabled = false;
+	let fontLoaded = false;
 
 	onMount(() => {
-		const links = document.querySelectorAll("a")
-		links.forEach(e => {
-			e.addEventListener('click', function (event) {
+		// Check if the font is loaded
+		const font1 = new FontFaceObserver('Permanent Marker');
+		const font2 = new FontFaceObserver('Rubik Doodle Shadow')
+		font1.load().then(() => {
+			font2.load().then(() => {
+				fontLoaded = true;
+			})
+		});
 
+		const links = document.querySelectorAll('a');
+		links.forEach((e) => {
+			e.classList.remove('disable');
+			e.addEventListener('click', function (event) {
 				// Prevent the default behavior (immediate redirection)
 				event.preventDefault();
-				console.log(event.target.id)
-				const otherLinks = document.querySelectorAll(`a:not(#${event.target.id})`)
-				otherLinks.forEach(e => {
-					e.classList.add('disabled')
+				console.log(event.target.id);
+				const otherLinks = document.querySelectorAll(`a:not(#${event.target.id})`);
+				otherLinks.forEach((e) => {
+					e.classList.add('disabled');
 				});
 				// Set a timeout for the desired delay (in milliseconds)
 				const delayInMilliseconds = 1000; // 1000 milliseconds (1 second)
@@ -29,17 +40,19 @@
 </script>
 
 <div class="menu">
-	<h1 class="title">Geo Quiz</h1>
-	<div class="games">
-		<div class="column">
-			<a id="a" class:disabled={isDisabled} href="/guessFlag">Guess the Flag</a>
-			<a id="b" class:disabled={isDisabled} href="/guessLanguage">Guess the Language</a>
+	{#if fontLoaded}
+		<h1 class="title">Geo Quiz</h1>
+		<div class="games">
+			<div class="column">
+				<a id="a" class:disabled={isDisabled} href="/guessFlag">Guess the Flag</a>
+				<a id="b" class:disabled={isDisabled} href="/guessLanguage">Guess the Language</a>
+			</div>
+			<div class="column">
+				<a id="c" class:disabled={isDisabled} href="/guessCapital">Guess the Capital</a>
+				<a id="d" class:disabled={isDisabled} href="/guessCurrency">Guess the Currency</a>
+			</div>
 		</div>
-		<div class="column">
-			<a id="c" class:disabled={isDisabled} href="/guessCapital">Guess the Capital</a>
-			<a id="d" class:disabled={isDisabled} href="/guessCurrency">Guess the Currency</a>
-		</div>
-	</div>
+	{/if}
 </div>
 
 <style>
@@ -104,7 +117,7 @@
 		transition:
 			box-shadow 0.3s ease,
 			font-size 0.3s ease;
-			background-color: 0.3s ease;
+		background-color: 0.3s ease;
 	}
 
 	.column > a:hover {
