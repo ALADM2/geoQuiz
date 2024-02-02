@@ -1,13 +1,43 @@
+<script>
+	// @ts-nocheck
+
+	import { onMount } from 'svelte';
+
+	let isDisabled = false;
+
+	onMount(() => {
+		const links = document.querySelectorAll("a")
+		links.forEach(e => {
+			e.addEventListener('click', function (event) {
+
+				// Prevent the default behavior (immediate redirection)
+				event.preventDefault();
+				console.log(event.target.id)
+				const otherLinks = document.querySelectorAll(`a:not(#${event.target.id})`)
+				otherLinks.forEach(e => {
+					e.classList.add('disabled')
+				});
+				// Set a timeout for the desired delay (in milliseconds)
+				const delayInMilliseconds = 1000; // 1000 milliseconds (1 second)
+				setTimeout(function () {
+					// Manually redirect after the delay
+					window.location.href = event.target.href;
+				}, delayInMilliseconds);
+			});
+		});
+	});
+</script>
+
 <div class="menu">
 	<h1 class="title">Geo Quiz</h1>
 	<div class="games">
 		<div class="column">
-			<a href="/guessFlag">Guess the Flag</a>
-			<a href="/guessLanguage">Guess the Language</a>
+			<a id="a" class:disabled={isDisabled} href="/guessFlag">Guess the Flag</a>
+			<a id="b" class:disabled={isDisabled} href="/guessLanguage">Guess the Language</a>
 		</div>
 		<div class="column">
-			<a href="/guessCapital">Guess the Capital</a>
-			<a href="/guessCurrency">Guess the Currency</a>
+			<a id="c" class:disabled={isDisabled} href="/guessCapital">Guess the Capital</a>
+			<a id="d" class:disabled={isDisabled} href="/guessCurrency">Guess the Currency</a>
 		</div>
 	</div>
 </div>
@@ -34,6 +64,8 @@
 		box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.5);
 		border-radius: 60px;
 		background-color: #bccdb6;
+		margin-bottom: 50px;
+		cursor: default;
 	}
 
 	.games {
@@ -69,37 +101,49 @@
 		color: #125737;
 		background-color: #f5eedc;
 		text-decoration: none;
-		transition: box-shadow 0.3s ease, font-size 0.3s ease;
+		transition:
+			box-shadow 0.3s ease,
+			font-size 0.3s ease;
+			background-color: 0.3s ease;
 	}
 
-	.column > a:hover,
-	.column > a:focus {
+	.column > a:hover {
 		color: #2c4d3d;
 		box-shadow: inset 15em 0 0 0 #e2ca8e;
 		font-size: 2.1dvw;
 	}
+	.column > a:focus {
+		box-shadow: inset 0 0 0 0 #e2ca8e;
+		background-color: #ba99f7;
+		font-size: 2.3dvw;
+	}
+
+	.disabled {
+		pointer-events: none; /* Disable pointer events */
+		opacity: 0.6;
+	}
 
 	@media (max-width: 900px) {
 		.column > a {
-			font-size: 3dvw;
+			font-size: 2.3dvw;
 		}
 	}
 
 	@media (max-width: 700px) {
-        .menu{
-            justify-content: space-around;
-        }
+		.menu {
+			justify-content: space-around;
+		}
 
 		.title {
 			font-size: 12dvw;
-            text-shadow: 3px 3px 0px #ecb390;
-            box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5);
+			text-shadow: 3px 3px 0px #ecb390;
+			box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5);
 			-webkit-text-stroke: 0.5px #dd4a48; /* For Safari and Chrome */
 		}
 
 		.games {
 			flex-wrap: wrap;
-            margin-bottom: 20px;
+			margin-bottom: 20px;
 		}
 
 		.column {
