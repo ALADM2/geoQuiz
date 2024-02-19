@@ -54,6 +54,15 @@
 				>
 			</div>
 		</div>
+		<div class="coffee">
+			<h3>
+				You can support me by buying me a coffee.
+			</h3>
+			<a href="https://www.buymeacoffee.com/aladm1">
+				<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee">
+			</a>
+
+		</div>
 	{/if}
 </div>
 
@@ -69,7 +78,7 @@
 
 	.title {
 		font-family: 'Permanent Marker';
-		font-size: 7dvw;
+		font-size: 5dvw;
 		-webkit-text-stroke: 0.1px #dd4a48; /* For Safari and Chrome */
 		text-stroke: 0.1px black; /* For other browsers (may not be supported) */
 		color: #f5eedc; /* Set the text color */
@@ -99,7 +108,7 @@
 		align-items: center;
 		justify-content: center;
 		margin: 10px;
-		padding: 50px 20px;
+		padding: 35px 20px;
 		height: -webkit-fill-available;
 		width: 25dvw;
 		min-height: 80px;
@@ -108,7 +117,7 @@
 		border-radius: 15px;
 		text-decoration: none;
 		font-family: 'Rubik Doodle Shadow';
-		font-size: 2dvw;
+		font-size: 1.7dvw;
 		white-space: nowrap;
 		letter-spacing: 1.5px;
 		font-weight: bold;
@@ -123,18 +132,35 @@
 
 	.column > a:hover {
 		color: #2c4d3d;
-		box-shadow: inset 15em 0 0 0 #e2ca8e;
-		font-size: 2.1dvw;
+		box-shadow: inset 17em 0 0 0 #e2ca8e;
+		font-size: 1.8dvw;
 	}
 	.column > a:focus {
 		box-shadow: inset 0 0 0 0 #e2ca8e;
 		background-color: #ba99f7;
-		font-size: 2.3dvw;
+		font-size: 2dvw;
 	}
 
 	.disabled {
 		pointer-events: none; /* Disable pointer events */
 		opacity: 0.6;
+	}
+
+	.coffee {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.coffee > h3 {
+		color: #125737;
+		font-family: 'Chakra Petch';
+		font-style: oblique;
+	}
+
+	.coffee > a > img{
+		width: 150px;
 	}
 
 	@media (max-width: 900px) {
