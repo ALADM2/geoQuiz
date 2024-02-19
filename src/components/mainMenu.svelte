@@ -183,7 +183,6 @@
 
 		.games {
 			flex-wrap: wrap;
-			margin-bottom: 20px;
 		}
 
 		.column {
@@ -202,6 +201,10 @@
 			color: #2c4d3d;
 			background-color: #e2ca8e;
 			font-size: 5.1dvw;
+		}
+
+		.coffee {
+			margin-bottom: 20px;
 		}
 	}
 </style>
