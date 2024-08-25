@@ -8,6 +8,9 @@
 	let fontLoaded = false;
 
 	onMount(() => {
+		// Reset round and score every time user goes to main menu
+		sessionStorage.setItem('score', 0);
+        sessionStorage.setItem('round', 1); 
 		// Check if the font is loaded
 		const font1 = new FontFaceObserver('Permanent Marker');
 		const font2 = new FontFaceObserver('Rubik Doodle Shadow');
