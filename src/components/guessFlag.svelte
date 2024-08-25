@@ -6,7 +6,13 @@
 	import { onMount } from 'svelte';
 	import { Circle3 } from 'svelte-loading-spinners';
 
-	import { rightAnswer, wrongAnswer, enableButtons, disableButtons, shuffleArray } from '$lib/gameFunctions';
+	import {
+		rightAnswer,
+		wrongAnswer,
+		enableButtons,
+		disableButtons,
+		shuffleArray
+	} from '$lib/gameFunctions';
 
 	const countriesNum = 4;
 	let data;
@@ -25,6 +31,7 @@
 	let restart = false; //Exported from timer
 	let seconds = 5; //Exported from timer
 	let isClicked = false;
+	let isImageLoaded = false; // New variable to track image load
 
 	const findNewData = async () => {
 		//Fetch data
@@ -53,7 +60,7 @@
 		if (countries.length < 4) {
 			for (let i = 0; i < countriesNum - 1; i++) {
 				let newCountry;
-				
+
 				do {
 					random = Math.floor(Math.random() * data.length); //Generate random country number
 					newCountry = data[random].name.common;
@@ -83,7 +90,16 @@
 			}
 		};
 		prepare();
-		await findNewData(data, countries, restart, isClicked, randomNums, flag, rightCountry, countriesNum);
+		await findNewData(
+			data,
+			countries,
+			restart,
+			isClicked,
+			randomNums,
+			flag,
+			rightCountry,
+			countriesNum
+		);
 	});
 
 	async function passRound() {
@@ -97,6 +113,10 @@
 		if (round <= 10) {
 			findNewData(); //Get new flag
 		}
+	}
+
+	function onImageLoad() {
+		isImageLoaded = true; // Set to true when the image is fully loaded
 	}
 
 	$: {
@@ -129,7 +149,7 @@
 		if (selected.textContent === rightCountry) {
 			score = await rightAnswer(selected, score);
 
-		// If selection is incorrect
+			// If selection is incorrect
 		} else {
 			await wrongAnswer(rightCountry, selected);
 		}
@@ -146,17 +166,31 @@
 					<h2>Round&nbsp;&nbsp;{round}/10</h2>
 					<h2>Score: {score}</h2>
 				</div>
-				<img src={flag} alt="" />
+				<img src={flag} alt="" on:load={onImageLoad} />
 				<div class="options">
-					<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
+					{#if isImageLoaded}
+						<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
+					{/if}
 					<ul class="countryList">
 						{#each countries as country, index}
-							<button value={country} class="element" on:click={() => handleClick(index)} class:correct={isCorrect} class:incorrect={isIncorrect} class:disabled={isDisabled}>{country}</button>
+							<button
+								value={country}
+								class="element"
+								on:click={() => handleClick(index)}
+								class:correct={isCorrect}
+								class:incorrect={isIncorrect}
+								class:disabled={isDisabled}>{country}</button
+							>
 						{/each}
 					</ul>
 				</div>
 			{:else}
-				<GameScore {score} onNewGame={(v) => (newGame = v)} onChangeRound={(v) => (round = v)} onChangeScore={(v) => (score = v)}/>
+				<GameScore
+					{score}
+					onNewGame={(v) => (newGame = v)}
+					onChangeRound={(v) => (round = v)}
+					onChangeScore={(v) => (score = v)}
+				/>
 			{/if}
 		</div>
 	{:else}
@@ -267,7 +301,7 @@
 			align-items: center;
 			justify-content: space-around;
 		}
-		.options{
+		.options {
 			margin-bottom: 30px;
 		}
 		.element {
