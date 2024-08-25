@@ -6,12 +6,18 @@
 	import { onMount } from 'svelte';
 	import { Circle3 } from 'svelte-loading-spinners';
 
-	import { rightAnswer, wrongAnswer, enableButtons, disableButtons, shuffleArray } from '$lib/gameFunctions';
+	import {
+		rightAnswer,
+		wrongAnswer,
+		enableButtons,
+		disableButtons,
+		shuffleArray
+	} from '$lib/gameFunctions';
 
 	const countriesNum = 4;
 	let data;
-	let flag;
-	let rightCountry;
+	let flags = [];
+	let rightCountries = [];
 	let newGame = false;
 	let countries = [];
 	let randomNums = []; //To check for duplicates
@@ -26,34 +32,38 @@
 	let seconds = 5; //Exported from timer
 	let isClicked = false;
 
-	const findNewData = async () => {
-		//Fetch data
+	const findCountriesData = async () => {
 		const response = await fetch('https://restcountries.com/v3.1/all');
 		data = await response.json();
-		countries = []; //Empty array in every iteration
+		for (let i = 0; i < 10; i++) {
+			let random = Math.floor(Math.random() * data.length); //Generate random country number;
+			while (randomNums.includes(random)) {
+				random = Math.floor(Math.random() * data.length); //Generate random country number
+				sessionStorage.setItem('random', random);
+			}
+			randomNums = [...randomNums, random];
+			flags = [...flags, data[random].flags.png] ; //Get random flag
+			console.log(flags)
+			rightCountries = [...rightCountries, data[random].name.common]; //Flag selected country name
+			// countries = sessionStorage.getItem('countries')
+			// 	? sessionStorage.getItem('countries').split(',')
+			// 	: [...countries, rightCountry]; //Push random country name to array
+		}
+	};
+	const findNewData = async () => {
 		restart = false; //Set to false when new question
 		isClicked = false;
 		seconds = 5; //Reset seconds to 5
-		let random = sessionStorage.getItem('random') || Math.floor(Math.random() * data.length); //Generate random country number;
-		sessionStorage.setItem('random', random);
 
-		while (randomNums.includes(random)) {
-			random = Math.floor(Math.random() * data.length); //Generate random country number
-			sessionStorage.setItem('random', random);
-		}
-
-		randomNums = [...randomNums, random];
-		flag = data[random].flags.png; //Get random flag
-		rightCountry = data[random].name.common; //Flag selected country name
 		countries = sessionStorage.getItem('countries')
 			? sessionStorage.getItem('countries').split(',')
-			: [...countries, rightCountry]; //Push random country name to array
+			: [...countries, rightCountries[round-1]]; //Push random country name to array
 
 		//Get random countries for answers
 		if (countries.length < 4) {
 			for (let i = 0; i < countriesNum - 1; i++) {
 				let newCountry;
-				
+
 				do {
 					random = Math.floor(Math.random() * data.length); //Generate random country number
 					newCountry = data[random].name.common;
@@ -83,7 +93,8 @@
 			}
 		};
 		prepare();
-		findNewData(data, countries, restart, isClicked, randomNums, flag, rightCountry, countriesNum);
+		await findCountriesData(data, flags, rightCountries);
+		await findNewData(data, countries, restart, isClicked, randomNums, countriesNum);
 	});
 
 	async function passRound() {
@@ -129,7 +140,7 @@
 		if (selected.textContent === rightCountry) {
 			score = await rightAnswer(selected, score);
 
-		// If selection is incorrect
+			// If selection is incorrect
 		} else {
 			await wrongAnswer(rightCountry, selected);
 		}
@@ -146,17 +157,29 @@
 					<h2>Round&nbsp;&nbsp;{round}/10</h2>
 					<h2>Score: {score}</h2>
 				</div>
-				<img src={flag} alt="" />
+				<img src={flags[round-1]} alt="" />
 				<div class="options">
 					<Timer {restart} {seconds} {isClicked} onChangeTimer={(v) => (seconds = v)} />
 					<ul class="countryList">
 						{#each countries as country, index}
-							<button value={country} class="element" on:click={() => handleClick(index)} class:correct={isCorrect} class:incorrect={isIncorrect} class:disabled={isDisabled}>{country}</button>
+							<button
+								value={country}
+								class="element"
+								on:click={() => handleClick(index)}
+								class:correct={isCorrect}
+								class:incorrect={isIncorrect}
+								class:disabled={isDisabled}>{country}</button
+							>
 						{/each}
 					</ul>
 				</div>
 			{:else}
-				<GameScore {score} onNewGame={(v) => (newGame = v)} onChangeRound={(v) => (round = v)} onChangeScore={(v) => (score = v)}/>
+				<GameScore
+					{score}
+					onNewGame={(v) => (newGame = v)}
+					onChangeRound={(v) => (round = v)}
+					onChangeScore={(v) => (score = v)}
+				/>
 			{/if}
 		</div>
 	{:else}
@@ -267,7 +290,7 @@
 			align-items: center;
 			justify-content: space-around;
 		}
-		.options{
+		.options {
 			margin-bottom: 30px;
 		}
 		.element {
