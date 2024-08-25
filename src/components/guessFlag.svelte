@@ -83,7 +83,7 @@
 			}
 		};
 		prepare();
-		findNewData(data, countries, restart, isClicked, randomNums, flag, rightCountry, countriesNum);
+		await findNewData(data, countries, restart, isClicked, randomNums, flag, rightCountry, countriesNum);
 	});
 
 	async function passRound() {
