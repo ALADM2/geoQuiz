@@ -3,6 +3,11 @@
 
 	import { onMount } from 'svelte';
 	import FontFaceObserver from 'fontfaceobserver';
+	import EarthLogo from '../svg/Earth.svelte';
+	import Flag from '../svg/Flag.svelte';
+	import Speech from '../svg/Speech.svelte'
+	import City from '../svg/City.svelte'
+	import Currency from '../svg/Currency.svelte'
 
 	let isDisabled = false;
 	let fontLoaded = false;
@@ -10,7 +15,7 @@
 	onMount(() => {
 		// Reset round and score every time user goes to main menu
 		sessionStorage.setItem('score', 0);
-        sessionStorage.setItem('round', 1); 
+		sessionStorage.setItem('round', 1);
 		// Check if the font is loaded
 		const font1 = new FontFaceObserver('Permanent Marker');
 		const font2 = new FontFaceObserver('Rubik Doodle Shadow');
@@ -40,31 +45,37 @@
 
 <div class="menu">
 	{#if fontLoaded}
-		<h1 class="title">Geo Quiz</h1>
+		<h1 class="title">
+			Geo
+			<div class="logo">
+				<EarthLogo />
+			</div>
+			Quiz
+		</h1>
 		<div class="games">
 			<div class="column">
-				<a on:click={delay} id="a" class:disabled={isDisabled} href="/guessFlag">Guess the Flag</a>
+				<a on:click={delay} id="a" class:disabled={isDisabled} href="/guessFlag">Guess the Flag <div class="icon"><Flag/></div></a>
 				<a on:click={delay} id="b" class:disabled={isDisabled} href="/guessLanguage"
-					>Guess the Language</a
+					>Guess the Language<Speech class='icon'/></a
 				>
 			</div>
 			<div class="column">
 				<a on:click={delay} id="c" class:disabled={isDisabled} href="/guessCapital"
-					>Guess the Capital</a
+					>Guess the Capital <div><City/></div></a
 				>
 				<a on:click={delay} id="d" class:disabled={isDisabled} href="/guessCurrency"
-					>Guess the Currency</a
+					>Guess the Currency <div><Currency/></div></a
 				>
 			</div>
 		</div>
 		<div class="coffee">
-			<h3>
-				You can support me by buying me a coffee.
-			</h3>
+			<h3>You can support me by buying me a coffee.</h3>
 			<a href="https://www.buymeacoffee.com/aladm1">
-				<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee">
+				<img
+					src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+					alt="Buy Me a Coffee"
+				/>
 			</a>
-
 		</div>
 	{/if}
 </div>
@@ -80,20 +91,26 @@
 	}
 
 	.title {
+		display: flex;
+		/* width: 95%; */
+		align-items: center;
 		font-family: 'Permanent Marker';
 		font-size: 5dvw;
 		-webkit-text-stroke: 0.1px #dd4a48; /* For Safari and Chrome */
 		text-stroke: 0.1px black; /* For other browsers (may not be supported) */
 		color: #f5eedc; /* Set the text color */
 		letter-spacing: 7px;
+		text-align: center;
 		text-shadow: 5px 5px 0px #ecb390;
 		padding: 20px 40px;
-		box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.5);
-		border-radius: 60px;
-		background-color: #bccdb6;
 		cursor: default;
 	}
-
+	.logo {
+		margin: 0 10px;
+	}
+	.icon {
+		/* margin-left: 20px; */
+	}
 	.games {
 		display: flex;
 		justify-content: space-between;
@@ -109,7 +126,7 @@
 	.column > a {
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		justify-content: space-between;
 		margin: 10px;
 		padding: 35px 20px;
 		height: -webkit-fill-available;
@@ -162,7 +179,7 @@
 		font-style: oblique;
 	}
 
-	.coffee > a > img{
+	.coffee > a > img {
 		width: 150px;
 	}
 
@@ -180,7 +197,7 @@
 		.title {
 			font-size: 12dvw;
 			text-shadow: 3px 3px 0px #ecb390;
-			box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5);
+			/* box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5); */
 			-webkit-text-stroke: 0.5px #dd4a48; /* For Safari and Chrome */
 		}
 
