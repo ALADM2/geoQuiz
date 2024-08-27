@@ -186,6 +186,7 @@
 	@media (max-width: 900px) {
 		.column > a {
 			font-size: 2.3dvw;
+			width: auto;
 		}
 	}
 
