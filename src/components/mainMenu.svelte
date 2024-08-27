@@ -153,7 +153,7 @@
 	.column > a:hover {
 		color: #2c4d3d;
 		box-shadow: inset 17em 0 0 0 #e2ca8e;
-		font-size: 1.8dvw;
+		font-size: 1.75dvw;
 	}
 	.column > a:focus {
 		box-shadow: inset 0 0 0 0 #e2ca8e;
