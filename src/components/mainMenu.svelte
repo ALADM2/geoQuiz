@@ -92,7 +92,7 @@
 
 	.title {
 		display: flex;
-		/* width: 95%; */
+		margin: 0;
 		align-items: center;
 		font-family: 'Permanent Marker';
 		font-size: 5dvw;
@@ -102,7 +102,7 @@
 		letter-spacing: 7px;
 		text-align: center;
 		text-shadow: 5px 5px 0px #ecb390;
-		padding: 20px 40px;
+		padding: 10px 0px;
 		cursor: default;
 	}
 	.logo {
