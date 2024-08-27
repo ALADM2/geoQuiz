@@ -183,10 +183,10 @@
 		width: 150px;
 	}
 
-	@media (max-width: 900px) {
+	@media (max-width: 1024px) {
 		.column > a {
 			font-size: 2.3dvw;
-			width: auto;
+			width: 90%;
 		}
 	}
 
