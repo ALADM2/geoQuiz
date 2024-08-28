@@ -3,7 +3,7 @@
     "description": "YOUR DESCRIPTION",
     "display": "standalone",
     "start_url": "/",
-    "theme_color": "blue",
+    "background_color": "rgb(214, 255, 222)",
     "icons": [
       {
         "src": "android-launchericon-72-72.png",
