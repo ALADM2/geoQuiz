@@ -1,0 +1,26 @@
+{
+    "name": "GEOQUIZ",
+    "description": "YOUR DESCRIPTION",
+    "display": "standalone",
+    "start_url": "/",
+    "icons": [
+      {
+        "src": "Earth64.png",
+        "sizes": "64x64",
+        "type": "image/png",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "Earth192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "Earth512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+      }
+    ]
+  }
